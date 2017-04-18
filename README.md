@@ -35,7 +35,7 @@ get_git_base_path()
 
 ### Listing studies
 
-To know what data you want to use, you need to have a listing of data sets to look at. The functions `get_study_list()` and `get_study_list_anthro()` do this. They return a data frame of meta data that you can use to search for data sets you would like to use in your analyses.
+To know what data you want to use, you need to have a listing of possible data sets to look at. The functions `get_study_list()` and `get_study_list_anthro()` do this. They return a data frame of meta data that you can use to search for data sets you would like to use in your analyses.
 
 ```r
 studies <- get_study_list()
@@ -108,3 +108,17 @@ wsb <- use_study("wsb")
 That's it.
 
 This function is primarily designed for reading in data of a specific format that includes anthropometry and hence it favores studies available from `get_study_list_anthro()` since for those we have specific paths to data files to read. In the case of other data sets, we aren't always guaranteed what form the data takes and which file to read, but in that case a guess is made and a message is displayed to that effect to the user.
+
+### Checking out all repositories
+
+While the main functionality of this package is to help you get the data you need with `use_study()` (all the git stuff is secondary), it can be a useful quick way to check out all the data repositories with the intention of reading and working with the data later (as checking out can be a lengthy process that you might want to do up front).
+
+```r
+astudies <- get_study_list_anthro()
+for (id in astudies$short_id)
+  tmp <- use_study(id)
+```
+
+
+
+
