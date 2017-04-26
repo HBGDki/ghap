@@ -342,7 +342,7 @@ update_repo <- function(grant_folder) {
 
 # called when there is an error with a git command
 check_git_credentials <- function() {
-  if (is_linux()) {
+  # if (is_linux()) {
     has_creds <- TRUE
     if (!file.exists("~/.netrc") || !file.exists("~/.git-credentials")) {
       has_creds <- FALSE
@@ -353,17 +353,17 @@ check_git_credentials <- function() {
     }
     if (!has_creds)
       set_git_credentials()
-  } else {
-    msg <- strwrap(paste(
-      "There was an error running the git command.",
-      "It could have to do with credentials.",
-      "If you haven't already, please visit this url:",
-      "http://gitcredentialstore.codeplex.com/downloads/get/672532",
-      "(note that you can run git_win_creds() to have this URL opened in your browser)",
-      "Install the program and next time you run a git command it will ask for your",
-      "credentials and save them for future use."))
-    message(paste(msg, collapse = "\n"))
-  }
+  # } else {
+  #   msg <- strwrap(paste(
+  #     "There was an error running the git command.",
+  #     "It could have to do with credentials.",
+  #     "If you haven't already, please visit this url:",
+  #     "http://gitcredentialstore.codeplex.com/downloads/get/672532",
+  #     "(note that you can run git_win_creds() to have this URL opened in your browser)",
+  #     "Install the program and next time you run a git command it will ask for your",
+  #     "credentials and save them for future use."))
+  #   message(paste(msg, collapse = "\n"))
+  # }
 }
 
 stop_nice <- function(...) {
