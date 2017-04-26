@@ -2,7 +2,7 @@
 
 This R package contains a few useful functions for checking out, updating, organizing, and loading datasets stored on GHAP. This package is only useful to those who know what GHAP is and have access to the platform. It's only being made available publicly because it is much easier to install that way.
 
-The main goal of this function currently is to make it very convenient to get data that you want that is stored on git with a single command, and manage behind the scenes more painful things like finding the proper repository link, git credentials, and organizing the checked-out repositories.
+The main goal of this package currently is to make it very convenient to get data that you want that is stored on the GHAP git server with a single command, and manage behind the scenes more painful things like finding the proper repository link, git credentials, and organizing the checked-out repositories.
 
 ## Installation
 
