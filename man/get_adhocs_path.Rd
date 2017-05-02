@@ -4,7 +4,10 @@
 \alias{get_adhocs_path}
 \title{Get the path for the Vis-AdHocs repository}
 \usage{
-get_adhocs_path()
+get_adhocs_path(pull = FALSE)
+}
+\arguments{
+\item{pull}{should a pull be made on the repository while getting the path?}
 }
 \description{
 Get the path for the Vis-AdHocs repository
