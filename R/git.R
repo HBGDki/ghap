@@ -182,8 +182,10 @@ use_study <- function(id) {
 
 #' Get the path for the Vis-AdHocs repository
 #'
+#' @param pull should a pull be made on the repository while getting the path?
+#'
 #' @export
-get_adhocs_path <- function() {
+get_adhocs_path <- function(pull = FALSE) {
   path <- get_git_base_path()
 
   adhocs_path <- file.path(path, "Vis-AdHocs")
@@ -191,10 +193,12 @@ get_adhocs_path <- function() {
   if (!dir.exists(adhocs_path))
     git_adhocs_setup()
 
-  res <- system(sprintf("git -C %s pull", adhocs_path))
-  if (res == 128) {
-    check_git_credentials()
-    stop("Problem with credentials or couldn't find git server.", call. = FALSE)
+  if (pull) {
+    res <- system(sprintf("git -C %s pull", adhocs_path))
+    if (res == 128) {
+      check_git_credentials()
+      stop("Problem with credentials or couldn't find git server.", call. = FALSE)
+    }
   }
 
   adhocs_path
@@ -307,13 +311,6 @@ git_setup <- function() {
     "'study_id' or 'short_id' into use_study().")
 }
 
-#' Link to tool for setting up git credentials on Windows
-#'
-#' @export
-#' @importFrom utils browseURL
-git_win_creds <- function()
-  browseURL("http://gitcredentialstore.codeplex.com/downloads/get/672532")
-
 
 #### internal ####
 
@@ -342,7 +339,7 @@ update_repo <- function(grant_folder) {
 
 # called when there is an error with a git command
 check_git_credentials <- function() {
-  # if (is_linux()) {
+  if (is_linux()) {
     has_creds <- TRUE
     if (!file.exists("~/.netrc") || !file.exists("~/.git-credentials")) {
       has_creds <- FALSE
@@ -353,17 +350,14 @@ check_git_credentials <- function() {
     }
     if (!has_creds)
       set_git_credentials()
-  # } else {
-  #   msg <- strwrap(paste(
-  #     "There was an error running the git command.",
-  #     "It could have to do with credentials.",
-  #     "If you haven't already, please visit this url:",
-  #     "http://gitcredentialstore.codeplex.com/downloads/get/672532",
-  #     "(note that you can run git_win_creds() to have this URL opened in your browser)",
-  #     "Install the program and next time you run a git command it will ask for your",
-  #     "credentials and save them for future use."))
-  #   message(paste(msg, collapse = "\n"))
-  # }
+  } else {
+    msg <- strwrap(paste(
+      "There was an error running the git command.",
+      "It could have to do with credentials.",
+      "To set up credentials on Windows, you may need to do a one-time manual checkout",
+      "of a ghap repository."))
+    message(paste(msg, collapse = "\n"))
+  }
 }
 
 stop_nice <- function(...) {
