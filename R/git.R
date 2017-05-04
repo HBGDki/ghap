@@ -105,6 +105,7 @@ get_study_list <- function() {
 #' Get data for a given study ID
 #'
 #' @param id the study ID - this can either be a short ID or long ID which are found in the ID columns of the result of \code{\link{get_study_list}} or \code{\link{get_study_list_anthro}}
+#' @param defin boolean specifying whether to read in the data definition instead of the data - default is FALSE
 #'
 #' @details This function takes a study ID and if there is not a git repository checked out for it, it will check out the respository and read and return the appropriate data file. If the repository is checked out, it will pull any updates to the data and then read and return the appropriate data file. In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
 #'
@@ -114,7 +115,7 @@ get_study_list <- function() {
 #' studies <- get_study_list_anthro()
 #' wsb <- use_study("wsb")
 #' }
-use_study <- function(id) {
+use_study <- function(id, defin = FALSE) {
   path <- get_git_base_path()
 
   studies <- get_study_list()
@@ -130,6 +131,26 @@ use_study <- function(id) {
 
   visapps <- get_study_list_anthro()
   va_idx <- which(visapps$study_id == studies$study_id[idx])
+
+  if (defin) {
+    defdat <- NULL
+    if (length(va_idx) > 0) {
+      def_path <- file.path(path, "hbgd", grant_folder,
+        gsub("\\\\", "/", visapps$defin_path[va_idx]))
+      if (file.exists(def_path)) {
+        message("Reading ", def_path)
+        defdat <- suppressMessages(readr::read_csv(def_path))
+        names(defdat) <- tolower(names(defdat))
+        defdat$name <- tolower(defdat$name)
+      }
+    }
+
+    if (is.null(defdat))
+      message("Definition data was not read in...")
+
+    return(defdat)
+  }
+
   if (length(va_idx) > 0) {
     dat_path <- file.path(path, "hbgd", grant_folder,
       gsub("\\\\", "/", visapps$data_path[va_idx]))
