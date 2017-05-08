@@ -47,7 +47,7 @@ save_and_upload <- function(p, filename, width = 800, height = 800, type = "png"
   osf_id, osf_folder = "plots", ...) {
   if (basename(dirname(filename)) != "plots")
     stop("Expecting the file to go in a 'plots' directory")
-  make_plot(p, filename, width = 800, height = 800, type = "png", ...)
+  make_plot(p, filename, width = width, height = height, type = "png", ...)
   message("Plot ", basename(filename), " created")
   osfr::upload_file(osf_id, filename, paste0(osf_folder, "/", basename(filename)))
   message("Plot ", basename(filename), " added to OSF")
