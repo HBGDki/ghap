@@ -15,3 +15,4 @@ Clean up a study ID that may contain non-standard characters
 \details{
 This simply converts any non-alphanumeric character to "_", which is a useful conversion for file names, etc.
 }
+

@@ -12,3 +12,4 @@ get_adhocs_path(pull = FALSE)
 \description{
 Get the path for the Vis-AdHocs repository
 }
+

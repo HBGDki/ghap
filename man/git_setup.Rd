@@ -12,3 +12,4 @@ Find the local base git path and clone it if it isn't there
 \note{
 This function is usually called by other functions so it will rarely have need to be called explicitly.
 }
+

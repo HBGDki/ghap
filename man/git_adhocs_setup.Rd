@@ -9,3 +9,4 @@ git_adhocs_setup()
 \description{
 Check out the Vis-AdHocs repository in the correct location in the git directory
 }
+

@@ -25,3 +25,4 @@ Save a plot
 \details{
 All GHAP repositories are automatically organized and stored in a directory structure under a base git path which is specified by this function. This function will set an R environment variable that will be present in all subsequent sessions such that you only need to specify the base path once.
 }
+

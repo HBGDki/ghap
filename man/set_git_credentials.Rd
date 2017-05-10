@@ -12,3 +12,4 @@ Set git credentials
 \note{
 This function is usually called by other functions so it will rarely have need to be called explicitly.
 }
+

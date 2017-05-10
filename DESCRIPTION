@@ -1,17 +1,22 @@
 Package: ghap
 Title: Utilities for working on GHAP
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: person("Ryan", "Hafen", email = "rhafen@gmail.com", role = c("aut", "cre"))
-Description: Utilities for working in GHAP. Not a useful package for the general public.
+Description: Utilities for working in GHAP. Not a useful package for the general
+    public.
 Depends:
     R (>= 3.3.1)
 Imports:
     dplyr,
     readr,
-    osfr
+    osfr,
+    rvest,
+    xml2,
+    utils
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Suggests: testthat
-RoxygenNote: 6.0.1
+Suggests:
+    testthat
+RoxygenNote: 5.0.1
 Remotes: hafen/osfr

@@ -18,3 +18,4 @@ studies <- get_study_list_anthro()
 wsb <- use_study("wsb")
 }
 }
+
