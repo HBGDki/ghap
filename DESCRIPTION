@@ -12,11 +12,13 @@ Imports:
     osfr,
     rvest,
     xml2,
+    httr,
     utils
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests:
+    sinew,
     testthat
 RoxygenNote: 5.0.1
 Remotes: hafen/osfr

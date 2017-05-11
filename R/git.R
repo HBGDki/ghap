@@ -18,9 +18,9 @@ set_git_base_path <- function(path) {
   idx <- which(grepl("GHAP_GIT_BASE_PATH", a))
   if (length(idx) == 0)
     idx <- length(a) + 1
-  a[idx] <- paste0("GHAP_GIT_BASE_PATH=", path)
-  cat(paste(a, collapse = "\n"), "\n", file = "~/.Renviron")
 
+  a[idx] <- paste0("GHAP_GIT_BASE_PATH=", gsub('\\\\','\\\\\\\\',path))
+  cat(paste(a, collapse = "\n"), "\n", file = "~/.Renviron")
   options(GHAP_GIT_BASE_PATH = path)
 }
 

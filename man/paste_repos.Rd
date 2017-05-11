@@ -4,7 +4,10 @@
 \alias{paste_repos}
 \title{Retrieve git hbgd repository addresses from data store explorer}
 \usage{
-paste_repos()
+paste_repos(con = "clipboard")
+}
+\arguments{
+\item{con}{character, contains URI address or 'clipboard' which reads the URI from system clipboard, Default: 'clipboard'}
 }
 \value{
 data.frame
@@ -12,5 +15,16 @@ data.frame
 \description{
 Copy URL of current data store explorer state on clipboard and function returns list of
 checked studies with their respective clone paths on the git repository.
+}
+\examples{
+\donttest{ 
+query='Country=BFA&Country=BGD&Country=BGD\%2C+BRA\%2C+IND\%2C+NPL\%2C+PER\%2C+PAK\%2C+ZAF\%2C+TZA'
+uri=sprintf('http://hbgddatastoreserver-env.us-west-2.elasticbeanstalk.com/studies/explorer?\%s',query)
+paste_repos(uri)
+
+writeClipboard(uri)
+paste_repos()
+
+}
 }
 
