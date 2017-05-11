@@ -18,4 +18,3 @@ studies <- get_study_list()
 wsb <- use_study("wsb")
 }
 }
-

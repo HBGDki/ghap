@@ -20,5 +20,5 @@ LazyData: true
 Suggests:
     sinew,
     testthat
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
 Remotes: hafen/osfr
