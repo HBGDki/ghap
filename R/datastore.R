@@ -18,43 +18,50 @@
 #' 
 #' }
 #' @export
-paste_repos=function(con='clipboard'){
+paste_repos = function(con = "clipboard") {
   
-  #check git credentials & fetch current study list
-  GHAPstudies=ghap::get_study_list()
+  # check git credentials & fetch current study list
+  ghap_studies = ghap::get_study_list()
   
-  #read URI path
-  if(con=='clipboard'){
-  uri=ifelse(grepl('apple',utils::sessionInfo()[[1]]$platform),
-             suppressWarnings(utils::read.table(pipe('pbpaste'),stringsAsFactors = FALSE)[,1]),
-             suppressWarnings(utils::read.table('clipboard',stringsAsFactors = FALSE)[,1]))
-  }else{
-    uri=con
+  # read URI path
+  if (con == "clipboard") {
+    uri = ifelse(grepl("apple", utils::sessionInfo()[[1]]$platform), 
+                 suppressWarnings(
+                   utils::read.table(pipe("pbpaste"), stringsAsFactors = FALSE)[, 1]), 
+                 suppressWarnings(
+                   utils::read.table("clipboard", stringsAsFactors = FALSE)[, 1])
+                 )
+  } else {
+    uri = con
   }
   
-  #check URI head
-  if(httr::http_error(uri)) stop(sprintf('error in URL address: %s'),uri)
+  # check URI head
+  if (httr::http_error(uri)) 
+    stop(sprintf("error in URL address: %s"), uri)
   
-  #read in URI html
-  DS<-xml2::read_html(uri)
+  # read in URI html
+  ds <- xml2::read_html(uri)
   
-  #parse html for study list
-   #what studies are listed?
-  DSstudies<-DS%>%rvest::html_nodes(xpath='//*[contains(concat( " ", @class, " " ), concat( " ", "switch-label", " " ))]')%>%rvest::html_text()
+  # parse html for study list what studies are listed?
+  ds_studies <- ds %>% 
+    rvest::html_nodes(xpath = "//*[contains(concat( \" \", @class, \" \" ), concat( \" \", \"switch-label\", \" \" ))]") %>% 
+    rvest::html_text()
   
-   #what studies are checked?
-  DScheck<-DS%>%rvest::html_nodes(xpath='//*[starts-with(@id,"id_study")]')%>%rvest::html_attr('checked')
+  # what studies are checked?
+  ds_check <- ds %>% 
+    rvest::html_nodes(xpath = "//*[starts-with(@id,\"id_study\")]") %>% 
+    rvest::html_attr("checked")
   
-  #filter checked studies
-  CHECKstudies<-DSstudies[!is.na(DScheck)]
+  # filter checked studies
+  check_studies <- ds_studies[!is.na(ds_check)]
   
-  #filter git study list with checked studies
-  RETstudies=GHAPstudies[GHAPstudies$studyid%in%CHECKstudies,c('study_id','grant_folder')]
+  # filter git study list with checked studies
+  ret_studies = ghap_studies[ghap_studies$studyid %in% check_studies, c("study_id", "grant_folder")]
   
-  #create valid git repo paths for selected repositories
-  RETstudies$git_path=sprintf("https://git.ghap.io/stash/scm/hbgd/%s.git",RETstudies$grant_folder)
-
-  #return studies
-  RETstudies
+  # create valid git repo paths for selected repositories
+  ret_studies$git_path = sprintf("https://git.ghap.io/stash/scm/hbgd/%s.git", ret_studies$grant_folder)
+  
+  # return studies
+  ret_studies
   
 }
