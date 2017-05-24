@@ -9,6 +9,7 @@
 #' @return nothing
 #' @export
 sparse_ghap<-function(repo_url,repo,dirs,create=TRUE,remote='origin',branch='master'){
+  thisDir=getwd()
   if(create){
     # New repository
     ghap_base=normalizePath(ghap::get_git_base_path(),winslash = '/')
@@ -30,5 +31,5 @@ sparse_ghap<-function(repo_url,repo,dirs,create=TRUE,remote='origin',branch='mas
     # If you later decide to change which directories you would like checked out, 
     # simply edit the sparse-checkout file and run git read-tree again as above  
   }
-  
+  setwd(thisDir)
 }
