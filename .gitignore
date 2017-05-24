@@ -3,3 +3,4 @@
 .RData
 *.sublime-*
 _ignore
+/Miscellaneous/data/*.sqlite3

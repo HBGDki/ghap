@@ -22,5 +22,5 @@ data.frame
 use regular expression to search fields in ghap study meta data
 }
 \examples{
-search_ghap(c('^Birth','birth \\\\(days\\\\)$'),complete = FALSE)
+\donttest{search_ghap(c('^Birth','birth \\\\(days\\\\)$'),complete = FALSE)}
 }

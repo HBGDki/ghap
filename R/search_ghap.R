@@ -20,7 +20,7 @@ query_db<-function(pattern, field='LABEL',df=meta_ghap, ...){
 #' @importFrom reshape2 dcast
 #' @export
 #' @examples 
-#' search_ghap(c('^Birth','birth \\(days\\)$'),complete = FALSE)
+#' \donttest{search_ghap(c('^Birth','birth \\(days\\)$'),complete = FALSE)}
 search_ghap<-function(query,field='LABEL',complete=FALSE,...){
   y<-data.frame(query=query,stringsAsFactors = FALSE)%>%plyr::ddply(c('query'),.fun=query_db,...)
   
