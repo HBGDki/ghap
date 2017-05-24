@@ -4,32 +4,50 @@
 #' @param repo character, path on local disk that repository is cloned to
 #' @param dirs character, vector of repository subdirectories to fetch
 #' @param create boolean, create a new git clone?, Default: TRUE
+#' @param append boolean, append new lines to sparse-checkout file, Default: TRUE
 #' @param remote character, alias of the remote Default: 'origin'
 #' @param branch character, alias of the branch, Default: 'master'
 #' @return nothing
+#' @examples
+#' \donttest{
+#' repo_url='https://git.ghap.io/stash/scm/hbgd/allcrosssectional.git'
+#' repo='HBGD/allcrosssectional-sparse'
+#' dirs=sprintf('Main/%s',c('jobs/*.sas','adam/*.rtf','sdtm/*.rtf')
+#' #create new sparse clone
+#' sparse_ghap(repo_url,repo,dirs)
+#' 
+#' #update sparse-checkout definitions (appends to current list)
+#' sparse_ghap(repo_url,repo,dirs=c('Main/jobs/*.log'),create=FALSE)
+#' }
 #' @export
-sparse_ghap<-function(repo_url,repo,dirs,create=TRUE,remote='origin',branch='master'){
+sparse_ghap<-function(repo_url,repo,dirs,create=TRUE,append=TRUE,remote='origin',branch='master'){
+  
   thisDir=getwd()
-  if(create){
+  ghap_base=normalizePath(ghap::get_git_base_path(),winslash = '/')
+  repo_dir=file.path(ghap_base,repo)
+  if(!dir.exists(repo_dir)) dir.create(repo_dir)
+  setwd(repo_dir)
+  
+  if(create){ 
+    
     # New repository
-    ghap_base=normalizePath(ghap::get_git_base_path(),winslash = '/')
-    repo_dir=file.path(ghap_base,repo)
-    if(!dir.exists(repo_dir)) dir.create(repo_dir)
-    setwd(repo_dir)
+    
     system('git init')
     system(sprintf('git remote add -f %s %s',remote,repo_url))
     system('git config core.sparsecheckout true')
     cat(dirs,file = '.git/info/sparse-checkout',sep = '\n')
     system(sprintf('git pull %s %s',remote,branch))
     system(sprintf('git branch --set-upstream-to=origin/%s master',branch))
-  }else{
+    
+  }else{ 
+    
     # Existing repository
+    
     system('git config core.sparsecheckout true')
-    cat(dirs,file = '.git/info/sparse-checkout',sep = '\n',append = TRUE)
+    cat(dirs,file = '.git/info/sparse-checkout',sep = '\n',append = append)
     system('git read-tree -mu HEAD')
     
-    # If you later decide to change which directories you would like checked out, 
-    # simply edit the sparse-checkout file and run git read-tree again as above  
   }
+  
   setwd(thisDir)
 }

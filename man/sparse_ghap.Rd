@@ -4,8 +4,8 @@
 \alias{sparse_ghap}
 \title{Create a sparse ghap repository}
 \usage{
-sparse_ghap(repo_url, repo, dirs, create = TRUE, remote = "origin",
-  branch = "master")
+sparse_ghap(repo_url, repo, dirs, create = TRUE, append = TRUE,
+  remote = "origin", branch = "master")
 }
 \arguments{
 \item{repo_url}{character, repository url path}
@@ -16,6 +16,8 @@ sparse_ghap(repo_url, repo, dirs, create = TRUE, remote = "origin",
 
 \item{create}{boolean, create a new git clone?, Default: TRUE}
 
+\item{append}{boolean, append new lines to sparse-checkout file, Default: TRUE}
+
 \item{remote}{character, alias of the remote Default: 'origin'}
 
 \item{branch}{character, alias of the branch, Default: 'master'}
@@ -25,4 +27,16 @@ nothing
 }
 \description{
 Create a ghap repository that fetches only specified subdirectories and file types
+}
+\examples{
+\donttest{
+repo_url='https://git.ghap.io/stash/scm/hbgd/allcrosssectional.git'
+repo='HBGD/allcrosssectional-sparse'
+dirs=sprintf('Main/\%s',c('jobs/*.sas','adam/*.rtf','sdtm/*.rtf')
+#create new sparse clone
+sparse_ghap(repo_url,repo,dirs)
+
+#update sparse-checkout definitions (appends to current list)
+sparse_ghap(repo_url,repo,dirs=c('Main/jobs/*.log'),create=FALSE)
+}
 }
