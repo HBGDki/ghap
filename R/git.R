@@ -19,7 +19,7 @@ set_git_base_path <- function(path) {
   if (length(idx) == 0)
     idx <- length(a) + 1
 
-  a[idx] <- paste0("GHAP_GIT_BASE_PATH=", gsub('\\\\','\\\\\\\\',path))
+  a[idx] <- paste0("GHAP_GIT_BASE_PATH=", gsub("\\\\", "\\\\\\\\", path))
   cat(paste(a, collapse = "\n"), "\n", file = "~/.Renviron")
   options(GHAP_GIT_BASE_PATH = path)
 }
@@ -50,7 +50,7 @@ get_study_list_anthro <- function() {
   }
 
   tmp <- suppressMessages(
-    readr::read_csv(file.path(path, "hbgd/common/VisApps/VisApps.csv")))
+    readr::read_csv(file.path(path, "hbgd/common/VisApps/VisApps.csv")), guess_max = Inf)
   names(tmp) <- tolower(names(tmp))
 
   tmp2 <- get_study_list()
@@ -86,7 +86,7 @@ get_study_list <- function() {
   }
 
   studies <- suppressMessages(
-    readr::read_csv(file.path(path, "common/meta/StudyInfo.csv")))
+    readr::read_csv(file.path(path, "common/meta/StudyInfo.csv")), guess_max = Inf)
   names(studies) <- tolower(names(studies))
   studies <- studies %>%
     dplyr::filter(program_folder == "HBGD" & !is.na(grant_folder)) %>%
@@ -139,7 +139,7 @@ use_study <- function(id, defin = FALSE) {
         gsub("\\\\", "/", visapps$defin_path[va_idx]))
       if (file.exists(def_path)) {
         message("Reading ", def_path)
-        defdat <- suppressMessages(readr::read_csv(def_path))
+        defdat <- suppressMessages(readr::read_csv(def_path, guess_max = Inf))
         names(defdat) <- tolower(names(defdat))
         defdat$name <- tolower(defdat$name)
       }
@@ -178,14 +178,15 @@ use_study <- function(id, defin = FALSE) {
       } else {
         idx <- which.max(file.info(file.path(study_path, ff))$size)
         message("Guessing which csv file to read: ", ff[idx])
-        message("It is advised to look around the repository to see if a different file is more appropriate.")
+        message("It is advised to look around the repository to see ",
+          "if a different file is more appropriate.")
         dat_path <- file.path(study_path, ff[idx])
       }
     }
   }
 
   message("Reading ", dat_path)
-  d <- suppressMessages(readr::read_csv(dat_path))
+  d <- suppressMessages(readr::read_csv(dat_path, guess_max = Inf))
   names(d) <- tolower(names(d))
 
   # some studies (tanzaniachild2) have this issue:
