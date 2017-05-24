@@ -4,7 +4,7 @@
 \alias{sparse_ghap}
 \title{Create a sparse ghap repository}
 \usage{
-sparse_ghap(repo_url, repo, dirs, new = TRUE, remote = "origin",
+sparse_ghap(repo_url, repo, dirs, create = TRUE, remote = "origin",
   branch = "master")
 }
 \arguments{
@@ -14,7 +14,7 @@ sparse_ghap(repo_url, repo, dirs, new = TRUE, remote = "origin",
 
 \item{dirs}{character, vector of repository subdirectories to fetch}
 
-\item{new}{boolean, is this is new clone, Default: TRUE}
+\item{create}{boolean, create a new git clone?, Default: TRUE}
 
 \item{remote}{character, alias of the remote Default: 'origin'}
 
