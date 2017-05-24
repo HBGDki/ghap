@@ -17,7 +17,7 @@ Copy URL of current data store explorer state on clipboard and function returns 
 checked studies with their respective clone paths on the git repository.
 }
 \examples{
-\donttest{ 
+\donttest{
 query='Country=BFA&Country=BGD&Country=BGD\%2C+BRA\%2C+IND\%2C+NPL\%2C+PER\%2C+PAK\%2C+ZAF\%2C+TZA'
 uri=sprintf('http://hbgddatastoreserver-env.us-west-2.elasticbeanstalk.com/studies/explorer?\%s',query)
 paste_repos(uri)
