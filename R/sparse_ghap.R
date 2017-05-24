@@ -22,11 +22,12 @@
 #' @export
 sparse_ghap<-function(repo_url,repo,dirs,create=TRUE,append=TRUE,remote='origin',branch='master'){
   
-  thisDir=getwd()
   ghap_base=normalizePath(ghap::get_git_base_path(),winslash = '/')
   repo_dir=file.path(ghap_base,repo)
-  if(!dir.exists(repo_dir)) dir.create(repo_dir)
-  setwd(repo_dir)
+  
+  thisDir=getwd()
+  if(!dir.exists(repo_dir)&!dir.exists(file.path(dirname(getwd()),repo_dir))) dir.create(repo_dir)
+  if(thisDir!=file.path(dirname(getwd()),repo_dir)) setwd(repo_dir)
   
   if(create){ 
     
@@ -44,7 +45,18 @@ sparse_ghap<-function(repo_url,repo,dirs,create=TRUE,append=TRUE,remote='origin'
     # Existing repository
     
     system('git config core.sparsecheckout true')
-    cat(dirs,file = '.git/info/sparse-checkout',sep = '\n',append = append)
+    
+    if(append){
+      
+      dirs_append=dirs[which(!dirs%in%readLines('.git/info/sparse-checkout'))]
+      if(length(dirs_append)>0) cat(dirs_append,file = '.git/info/sparse-checkout',sep = '\n',append = append)
+      
+    }else{
+      
+      cat(dirs,file = '.git/info/sparse-checkout',sep = '\n')  
+      
+    }
+    
     system('git read-tree -mu HEAD')
     
   }
