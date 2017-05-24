@@ -7,13 +7,7 @@ Description: Utilities for working in GHAP. Not a useful package for the general
 Depends:
     R (>= 3.3.1)
 Imports:
-    dplyr,
-    readr,
-    osfr,
-    rvest,
-    xml2,
-    httr,
-    utils
+Imports: dplyr,plyr,tools,xml2,ghap,httr,rvest,utils,readr,osfr,grDevices,DT,reshape2
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
