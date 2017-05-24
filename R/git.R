@@ -50,7 +50,7 @@ get_study_list_anthro <- function() {
   }
 
   tmp <- suppressMessages(
-    readr::read_csv(file.path(path, "hbgd/common/VisApps/VisApps.csv")), guess_max = Inf)
+    readr::read_csv(file.path(path, "hbgd/common/VisApps/VisApps.csv"), guess_max = Inf))
   names(tmp) <- tolower(names(tmp))
 
   tmp2 <- get_study_list()
@@ -86,7 +86,7 @@ get_study_list <- function() {
   }
 
   studies <- suppressMessages(
-    readr::read_csv(file.path(path, "common/meta/StudyInfo.csv")), guess_max = Inf)
+    readr::read_csv(file.path(path, "common/meta/StudyInfo.csv"), guess_max = Inf))
   names(studies) <- tolower(names(studies))
   studies <- studies %>%
     dplyr::filter(program_folder == "HBGD" & !is.na(grant_folder)) %>%
