@@ -44,6 +44,7 @@ get_tbls <- function(word_doc) {
 #' @import dplyr
 #' @importFrom plyr ldply
 #' @importFrom tools file_path_sans_ext
+#' @importFrom tibble rownames_to_column
 #' @export
 parse_docs <- function(path) {
   data.dir <- sprintf("%s/HBGD/all%s/Main/sdtm", 
@@ -76,15 +77,18 @@ parse_docs <- function(path) {
   
   sdtm.contents <- sdtm.contents %>% 
     dplyr::left_join(sdtm.files, by = "DATASET") %>% 
-    dplyr::left_join(data.frame(file.info(sdtm.files$FILE)) %>% 
-    dplyr::select_('size') %>% 
-    dplyr::mutate(FILE = rownames(.), size = size/1e+06) %>% 
-    dplyr::rename_(SIZE = 'size'), by = "FILE") %>% 
-    dplyr::arrange(desc(SIZE)) %>% 
-    dplyr::left_join(sdtm.tbls.df %>% 
-    dplyr::count(DATASET) %>% 
-    dplyr::rename_(NCOL = 'n') %>% 
-    dplyr::mutate(DATASET = as.character(DATASET)), by = "DATASET")
+    dplyr::left_join(
+      data.frame(file.info(sdtm.files$FILE)) %>% 
+      dplyr::select_('size') %>% 
+      tibble::rownames_to_column(var='FILE')%>%
+      dplyr::mutate_(size = 'size/1e+06') %>% 
+      dplyr::rename_(SIZE = 'size'), by = "FILE") %>% 
+      dplyr::arrange_(.dots=c('desc(SIZE)')) %>% 
+      dplyr::left_join(sdtm.tbls.df %>% 
+      dplyr::count_('DATASET') %>% 
+      dplyr::rename_(NCOL = 'n') %>% 
+      dplyr::mutate_(DATASET = 'as.character(DATASET)'), 
+    by = "DATASET")
   
   return(list(contents = sdtm.contents, files = sdtm.files, df = sdtm.tbls.df))
 }
