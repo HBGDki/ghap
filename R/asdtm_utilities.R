@@ -3,6 +3,7 @@
 #' @param word_doc character, path to word docx file
 #' @return list
 #' @importFrom xml2 read_xml xml_ns xml_find_all xml_text
+#' @importFrom utils unzip
 #' @export
 get_tbls <- function(word_doc) {
   
@@ -10,7 +11,7 @@ get_tbls <- function(word_doc) {
   tmpf <- tempfile(tmpdir = tmpd, fileext = ".zip")
   
   file.copy(word_doc, tmpf)
-  unzip(tmpf, exdir = sprintf("%s/docdata", tmpd))
+  utils::unzip(tmpf, exdir = sprintf("%s/docdata", tmpd))
   
   doc <- xml2::read_xml(sprintf("%s/docdata/word/document.xml", tmpd))
   
@@ -45,7 +46,9 @@ get_tbls <- function(word_doc) {
 #' @importFrom tools file_path_sans_ext
 #' @export
 parse_docs <- function(path) {
-  data.dir <- sprintf("%s/HBGD/all%s/Main/sdtm", normalizePath(get_git_base_path(), winslash = "/"), path)
+  data.dir <- sprintf("%s/HBGD/all%s/Main/sdtm", 
+                      normalizePath(get_git_base_path(), winslash = "/"),
+                      path)
   
   # list of Tables
   sdtm.tbls.list <- get_tbls(file.path(data.dir, "Define_ASDTM.docx"))
