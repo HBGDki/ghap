@@ -7,30 +7,29 @@
 get_tbls <- function(word_doc) {
   
   tmpd <- tempdir()
-  tmpf <- tempfile(tmpdir=tmpd, fileext=".zip")
+  tmpf <- tempfile(tmpdir = tmpd, fileext = ".zip")
   
   file.copy(word_doc, tmpf)
-  unzip(tmpf, exdir=sprintf("%s/docdata", tmpd))
+  unzip(tmpf, exdir = sprintf("%s/docdata", tmpd))
   
   doc <- xml2::read_xml(sprintf("%s/docdata/word/document.xml", tmpd))
   
   unlink(tmpf)
-  unlink(sprintf("%s/docdata", tmpd), recursive=TRUE)
+  unlink(sprintf("%s/docdata", tmpd), recursive = TRUE)
   
   ns <- xml2::xml_ns(doc)
   
-  tbls <- xml2::xml_find_all(doc, ".//w:tbl", ns=ns)
+  tbls <- xml2::xml_find_all(doc, ".//w:tbl", ns = ns)
   
   lapply(tbls, function(tbl) {
     
-    cells <- xml2::xml_find_all(tbl, "./w:tr/w:tc", ns=ns)
-    rows <- xml2::xml_find_all(tbl, "./w:tr", ns=ns)
-    dat <- data.frame(matrix(xml2::xml_text(cells[-1]),
-                             ncol=(length(cells[-1])/length(rows[-1])),
-                             byrow=TRUE),
-                      stringsAsFactors=FALSE)
-    colnames(dat) <- dat[1,]
-    dat <- dat[-1,]
+    cells <- xml2::xml_find_all(tbl, "./w:tr/w:tc", ns = ns)
+    rows <- xml2::xml_find_all(tbl, "./w:tr", ns = ns)
+    dat <- data.frame(matrix(xml2::xml_text(cells[-1]), 
+                             ncol = (length(cells[-1])/length(rows[-1])), 
+                             byrow = TRUE), stringsAsFactors = FALSE)
+    colnames(dat) <- dat[1, ]
+    dat <- dat[-1, ]
     rownames(dat) <- NULL
     dat
     
@@ -45,45 +44,43 @@ get_tbls <- function(word_doc) {
 #' @importFrom plyr ldply
 #' @importFrom tools file_path_sans_ext
 #' @export
-parse_docs=function(path){
-  data.dir=sprintf("%s/HBGD/all%s/Main/sdtm",normalizePath(get_git_base_path(),winslash = '/'),path)
+parse_docs <- function(path) {
+  data.dir <- sprintf("%s/HBGD/all%s/Main/sdtm", normalizePath(get_git_base_path(), winslash = "/"), path)
   
-  #list of Tables
-  sdtm.tbls.list=get_tbls(file.path(data.dir,'Define_ASDTM.docx'))
-  names(sdtm.tbls.list)=toupper(c('DataSet.Summary',sdtm.tbls.list[[1]]$Dataset))
+  # list of Tables
+  sdtm.tbls.list <- get_tbls(file.path(data.dir, "Define_ASDTM.docx"))
+  names(sdtm.tbls.list) <- toupper(c("DataSet.Summary", sdtm.tbls.list[[1]]$Dataset))
   
-  #Remove tables that arent in Longitudinal folder
-  idx=names(sdtm.tbls.list)[!grepl('[._]|SITES',names(sdtm.tbls.list))]
+  # Remove tables that arent in Longitudinal folder
+  idx <- names(sdtm.tbls.list)[!grepl("[._]|SITES", names(sdtm.tbls.list))]
   
-  #Convert to Dataframe
-  sdtm.tbls.df=plyr::ldply(sdtm.tbls.list[idx],.id = 'DATASET',stringsAsFactors = F)
+  # Convert to Dataframe
+  sdtm.tbls.df <- plyr::ldply(sdtm.tbls.list[idx], .id = "DATASET", stringsAsFactors = F)
   
-  #First table is the table of contents
-  sdtm.contents=data.frame(sdtm.tbls.list[[1]],stringsAsFactors = F)%>%
-    dplyr::rename(DATASET=Dataset,DESCRIPTION=Description.of.dataset)%>%
-    dplyr::filter(!grepl('[._]|SITES',DATASET))
+  # First table is the table of contents
+  sdtm.contents <- data.frame(sdtm.tbls.list[[1]], stringsAsFactors = F) %>% 
+    dplyr::rename(DATASET = Dataset, DESCRIPTION = Description.of.dataset) %>% 
+    dplyr::filter(!grepl("[._]|SITES", DATASET))
   
-  #File names
-  sdtm.files=data.frame(file=list.files(data.dir,pattern = 'csv',full.names = TRUE),stringsAsFactors = F)%>%
-    dplyr::mutate(DATASET=tools::file_path_sans_ext(basename(file)))%>%
-    dplyr::rename(FILE=file)%>%
-    dplyr::filter(!grepl('[._]|SITES',DATASET))
+  # File names
+  sdtm.files <- data.frame(file = list.files(data.dir, pattern = "csv", full.names = TRUE), stringsAsFactors = F) %>% 
+    dplyr::mutate(DATASET = tools::file_path_sans_ext(basename(file))) %>% 
+    dplyr::rename(FILE = file) %>% 
+    dplyr::filter(!grepl("[._]|SITES", DATASET))
   
   
-  #Join the tables
+  # Join the tables
   
-  sdtm.contents=
-    sdtm.contents%>%
-    dplyr::left_join(sdtm.files,by="DATASET")%>%
-    dplyr::left_join(data.frame(
-      file.info(sdtm.files$FILE))%>%select(size)%>%
-        dplyr::mutate(FILE=rownames(.),size=size/1e6)%>%
-        dplyr::rename(SIZE=size),by='FILE')%>%
-    dplyr::arrange(desc(SIZE))%>%
-    dplyr::left_join(sdtm.tbls.df%>%
-                       dplyr::count(DATASET)%>%
-                       dplyr::rename(NCOL=n)%>%
-                       dplyr::mutate(DATASET=as.character(DATASET)),by='DATASET')
+  sdtm.contents <- sdtm.contents %>% 
+    dplyr::left_join(sdtm.files, by = "DATASET") %>% 
+    dplyr::left_join(data.frame(file.info(sdtm.files$FILE)) %>% 
+    dplyr::select(size) %>% dplyr::mutate(FILE = rownames(.), size = size/1e+06) %>% 
+    dplyr::rename(SIZE = size), by = "FILE") %>% 
+    dplyr::arrange(desc(SIZE)) %>% 
+    dplyr::left_join(sdtm.tbls.df %>% 
+    dplyr::count(DATASET) %>% 
+    dplyr::rename(NCOL = n) %>% 
+    dplyr::mutate(DATASET = as.character(DATASET)), by = "DATASET")
   
-  return(list(contents=sdtm.contents,files=sdtm.files,df=sdtm.tbls.df))
+  return(list(contents = sdtm.contents, files = sdtm.files, df = sdtm.tbls.df))
 }
