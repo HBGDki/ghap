@@ -19,7 +19,7 @@ set_git_base_path <- function(path) {
   if (length(idx) == 0)
     idx <- length(a) + 1
 
-  a[idx] <- paste0("GHAP_GIT_BASE_PATH=", gsub('\\\\','\\\\\\\\',path))
+  a[idx] <- paste0("GHAP_GIT_BASE_PATH=", gsub("\\\\", "\\\\\\\\", path))
   cat(paste(a, collapse = "\n"), "\n", file = "~/.Renviron")
   options(GHAP_GIT_BASE_PATH = path)
 }
@@ -106,6 +106,7 @@ get_study_list <- function() {
 #'
 #' @param id the study ID - this can either be a short ID or long ID which are found in the ID columns of the result of \code{\link{get_study_list}} or \code{\link{get_study_list_anthro}}
 #' @param defin boolean specifying whether to read in the data definition instead of the data - default is FALSE
+#' @param guess_max parameter passed on to \code{\link[readr]{read_csv}}
 #'
 #' @details This function takes a study ID and if there is not a git repository checked out for it, it will check out the respository and read and return the appropriate data file. If the repository is checked out, it will pull any updates to the data and then read and return the appropriate data file. In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
 #'
@@ -115,7 +116,7 @@ get_study_list <- function() {
 #' studies <- get_study_list_anthro()
 #' wsb <- use_study("wsb")
 #' }
-use_study <- function(id, defin = FALSE) {
+use_study <- function(id, defin = FALSE, guess_max = 100000) {
   path <- get_git_base_path()
 
   studies <- get_study_list()
@@ -178,14 +179,15 @@ use_study <- function(id, defin = FALSE) {
       } else {
         idx <- which.max(file.info(file.path(study_path, ff))$size)
         message("Guessing which csv file to read: ", ff[idx])
-        message("It is advised to look around the repository to see if a different file is more appropriate.")
+        message("It is advised to look around the repository to see ",
+          "if a different file is more appropriate.")
         dat_path <- file.path(study_path, ff[idx])
       }
     }
   }
 
   message("Reading ", dat_path)
-  d <- suppressMessages(readr::read_csv(dat_path))
+  d <- suppressMessages(readr::read_csv(dat_path, guess_max = guess_max))
   names(d) <- tolower(names(d))
 
   # some studies (tanzaniachild2) have this issue:
