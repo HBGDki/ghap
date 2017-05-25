@@ -18,7 +18,7 @@ sparse_ghap(repo_url, repo, dirs, create = TRUE, append = TRUE,
 
 \item{append}{boolean, append new lines to sparse-checkout file, Default: TRUE}
 
-\item{remote}{character, alias of the remote Default: 'origin'}
+\item{remote}{character, alias of the remote, Default: 'origin'}
 
 \item{branch}{character, alias of the branch, Default: 'master'}
 }
