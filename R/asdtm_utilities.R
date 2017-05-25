@@ -62,14 +62,14 @@ parse_docs <- function(path) {
   
   # First table is the table of contents
   sdtm.contents <- data.frame(sdtm.tbls.list[[1]], stringsAsFactors = F) %>% 
-    dplyr::rename(DATASET = Dataset, DESCRIPTION = Description.of.dataset) %>% 
-    dplyr::filter(!grepl("[._]|SITES", DATASET))
+    dplyr::rename_(.dots = c(DATASET='Dataset', DESCRIPTION='Description.of.dataset')) %>% 
+    dplyr::filter_(~!grepl("[._]|SITES", DATASET))
   
   # File names
   sdtm.files <- data.frame(file = list.files(data.dir, pattern = "csv", full.names = TRUE), stringsAsFactors = F) %>% 
     dplyr::mutate(DATASET = tools::file_path_sans_ext(basename(file))) %>% 
-    dplyr::rename(FILE = file) %>% 
-    dplyr::filter(!grepl("[._]|SITES", DATASET))
+    dplyr::rename_(FILE = 'file') %>% 
+    dplyr::filter_(~!grepl("[._]|SITES", DATASET))
   
   
   # Join the tables
@@ -77,12 +77,13 @@ parse_docs <- function(path) {
   sdtm.contents <- sdtm.contents %>% 
     dplyr::left_join(sdtm.files, by = "DATASET") %>% 
     dplyr::left_join(data.frame(file.info(sdtm.files$FILE)) %>% 
-    dplyr::select(size) %>% dplyr::mutate(FILE = rownames(.), size = size/1e+06) %>% 
-    dplyr::rename(SIZE = size), by = "FILE") %>% 
+    dplyr::select_('size') %>% 
+    dplyr::mutate(FILE = rownames(.), size = size/1e+06) %>% 
+    dplyr::rename_(SIZE = 'size'), by = "FILE") %>% 
     dplyr::arrange(desc(SIZE)) %>% 
     dplyr::left_join(sdtm.tbls.df %>% 
     dplyr::count(DATASET) %>% 
-    dplyr::rename(NCOL = n) %>% 
+    dplyr::rename_(NCOL = 'n') %>% 
     dplyr::mutate(DATASET = as.character(DATASET)), by = "DATASET")
   
   return(list(contents = sdtm.contents, files = sdtm.files, df = sdtm.tbls.df))
