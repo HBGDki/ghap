@@ -27,12 +27,12 @@ search_ghap <- function(query, field = "LABEL", complete = FALSE, ...) {
     plyr::ddply(c("query"), .fun = query_db, ...)
   
   out <- y %>% 
-    dplyr::mutate(COLS = sprintf("%s\n[%s]", LABEL, variable)) %>% 
+    dplyr::mutate_(COLS = paste0('sprintf("%s\n[%s]",', field,', variable)')) %>% 
     reshape2::dcast(Study_Type + STUDYID + DOMAIN ~ COLS, value.var = "query")
   
   if (complete) 
     out <- out %>% 
-    dplyr::filter(complete.cases(.))
+    dplyr::filter_(~complete.cases(.))
   
   DT::datatable(out, 
                 extensions = c("Buttons", "Scroller", "ColReorder", "FixedColumns"), 
@@ -49,5 +49,5 @@ search_ghap <- function(query, field = "LABEL", complete = FALSE, ...) {
                                )
                 )
   
-  return(invisible(out))
+  #invisible(out)
 }
