@@ -30,6 +30,7 @@ Create a ghap repository that fetches only specified subdirectories and file typ
 }
 \examples{
 \donttest{
+\dontrun{
 repo_url='https://git.ghap.io/stash/scm/hbgd/allcrosssectional.git'
 repo='HBGD/allcrosssectional-sparse'
 dirs=sprintf('Main/\%s',c('jobs/*.sas','adam/*.rtf','sdtm/*.rtf')
@@ -38,5 +39,6 @@ sparse_ghap(repo_url,repo,dirs)
 
 #update sparse-checkout definitions (appends to current list)
 sparse_ghap(repo_url,repo,dirs=c('Main/jobs/*.log'),create=FALSE)
+}
 }
 }

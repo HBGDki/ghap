@@ -10,7 +10,8 @@
 #' @examples
 #' \donttest{
 #' query='Country=BFA&Country=BGD&Country=BGD%2C+BRA%2C+IND%2C+NPL%2C+PER%2C+PAK%2C+ZAF%2C+TZA'
-#' uri=sprintf('http://hbgddatastoreserver-env.us-west-2.elasticbeanstalk.com/studies/explorer?%s',query)
+#' ghap_uri_base='http://hbgddatastoreserver-env.us-west-2.elasticbeanstalk.com/studies/explorer'
+#' uri=sprintf('%s?%s',ghap_uri_base,query)
 #' paste_repos(uri)
 #'
 #' writeClipboard(uri)

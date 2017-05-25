@@ -10,6 +10,7 @@
 #' @return nothing
 #' @examples
 #' \donttest{
+#' \dontrun{
 #' repo_url='https://git.ghap.io/stash/scm/hbgd/allcrosssectional.git'
 #' repo='HBGD/allcrosssectional-sparse'
 #' dirs=sprintf('Main/%s',c('jobs/*.sas','adam/*.rtf','sdtm/*.rtf')
@@ -18,6 +19,7 @@
 #' 
 #' #update sparse-checkout definitions (appends to current list)
 #' sparse_ghap(repo_url,repo,dirs=c('Main/jobs/*.log'),create=FALSE)
+#' }
 #' }
 #' @export
 sparse_ghap <- function(repo_url, repo, dirs, create = TRUE, append = TRUE, remote = "origin", branch = "master") {

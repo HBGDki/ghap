@@ -1,4 +1,4 @@
-query_db <- function(pattern, field = "LABEL", df = meta_ghap, ...) {
+query_db <- function(pattern, field = "LABEL", df = ghap::meta_ghap, ...) {
   
   if (!field %in% names(df)) 
     stop(sprintf("field : '%s' not in %s : '%s'", field, class(df), deparse(substitute(df))))
