@@ -16,9 +16,6 @@ show_repo <- function(layout='collapse'){
   x <- plyr::rbind.fill(x)
   x$depth <- apply(x,1,function(y) sum(!is.na(y)))
   x<-x%>%dplyr::filter_(~(depth-lead(depth,1))!=-1)
-  
-  x$depth<-NULL
-  
   d3Tree::d3tree(list(root = d3Tree::df2tree(rootname='archive',struct=x),layout = layout))
   
   #invisible(x)
