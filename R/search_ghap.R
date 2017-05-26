@@ -19,6 +19,7 @@ query_db <- function(pattern, field = "LABEL", df = ghap::meta_ghap, ...) {
 #' @importFrom DT datatable
 #' @importFrom plyr ddply
 #' @importFrom reshape2 dcast
+#' @importFrom htmltools html_print
 #' @export
 #' @examples 
 #' \donttest{search_ghap(c('^Birth','birth \\(days\\)$'),complete = FALSE)}
@@ -34,7 +35,7 @@ search_ghap <- function(query, field = "LABEL", complete = FALSE, ...) {
     out <- out %>% 
     dplyr::filter_(~complete.cases(.))
   
-  DT::datatable(out, 
+  htmltools::html_print(DT::datatable(out, 
                 extensions = c("Buttons", "Scroller", "ColReorder", "FixedColumns"), 
                 filter = "top", 
                 options = list(deferRender = TRUE, 
@@ -47,7 +48,7 @@ search_ghap <- function(query, field = "LABEL", complete = FALSE, ...) {
                                fixedColumns = TRUE, 
                                buttons = c("copy", "csv", "excel", "pdf", "print", "colvis")
                                )
-                )
+                ))
   
-  #invisible(out)
+  invisible(out)
 }
