@@ -25,6 +25,6 @@
 #'   \item{\code{Population}}{character Population of Study}
 #'   \item{\code{Repository_Name}}{character Name of repository that study is in}
 #'   \item{\code{Repository_Subfolder}}{character Subdirectory study is located in}
-#'   \item{\code{Study_URL}}{character Study URL} 
+#'   \item{\code{Study_URL}}{character Study URL}
 #'}
 "meta_ghap"
