@@ -2,7 +2,7 @@
 #' @description After adding a remote visually inpsect the directory structure of it before fetching/pulling
 #' @param path character, Path to root directory of git repository, Default: setwd()
 #' @param layout character, Layout of d3Tree output collapse, cartesian, radial Default: 'collapse'
-#' @return nothing
+#' @return data.frame
 #' @export
 #' @importFrom plyr rbind.fill
 #' @importFrom d3Tree d3tree df2tree

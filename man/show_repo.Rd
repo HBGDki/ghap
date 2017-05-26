@@ -12,7 +12,7 @@ show_repo(path = getwd(), layout = "collapse")
 \item{layout}{character, Layout of d3Tree output collapse, cartesian, radial Default: 'collapse'}
 }
 \value{
-nothing
+data.frame
 }
 \description{
 After adding a remote visually inpsect the directory structure of it before fetching/pulling
