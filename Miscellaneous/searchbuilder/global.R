@@ -19,3 +19,4 @@ loadData<-function(sql) {
   datacontent
 }
 
+createDB()
