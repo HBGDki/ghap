@@ -1,6 +1,8 @@
 require("RMySQL")
 library(ghap)
 
+#forked from https://github.com/Yannael/shinyQueryBuildR
+
 createDB<-function() {
   data(meta_ghap)
   names(names(meta_ghap))=gsub('[.]','_',names(meta_ghap))
