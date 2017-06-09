@@ -16,4 +16,4 @@ Suggests:
     sinew,
     testthat
 RoxygenNote: 6.0.1
-Remotes: schloerke/osfr
+Remotes: hafen/osfr
