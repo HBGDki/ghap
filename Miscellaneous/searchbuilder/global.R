@@ -1,3 +1,14 @@
+
+inst.pkg=rownames(installed.packages())
+toInstall=c('RMySQL','shiny','DT','plyr','reshape2','queryBuildR','dplyr')
+
+if(!grepl('queryBuildR',inst.pkg)){
+  devtools::install_github('Yannael/shinyQueryBuildR')
+  inst.pkg=inst.pkg[-grep('queryBuildR',inst.pkg)]
+}
+
+sapply(inst.pkg,function(x) install.packages(x,))
+
 require(RMySQL)
 library(ghap)
 library(shiny)
