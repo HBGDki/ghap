@@ -51,7 +51,7 @@ shinyServer(function(input, output, session) {
     
     y <- loadData(input$queryBuilderSQL)
 
-    if(nrow(y)<nrow(ghap::meta_ghap)){
+    if(nrow(y)<nrow(meta_ghap)){
     
       output$study_select <- 
         
