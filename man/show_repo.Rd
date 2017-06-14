@@ -4,12 +4,14 @@
 \alias{show_repo}
 \title{Visually inspect structure of git repository before initial fetch}
 \usage{
-show_repo(path = getwd(), layout = "collapse")
+show_repo(path = getwd(), layout = "collapse", showTree = TRUE)
 }
 \arguments{
 \item{path}{character, Path to root directory of git repository, Default: setwd()}
 
 \item{layout}{character, Layout of d3Tree output collapse, cartesian, radial Default: 'collapse'}
+
+\item{showTree}{boolean, show d3Tree, Default: TRUE}
 }
 \value{
 data.frame

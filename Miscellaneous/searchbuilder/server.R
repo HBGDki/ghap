@@ -1,34 +1,26 @@
-library(shiny)
-library(DT)
-library(plyr)
-library(reshape2)
-library(dplyr)
-library(queryBuildR)
-
 shinyServer(function(input, output, session) {
   
   sessionvalues <- reactiveValues()
-  sessionvalues$data<-loadData("")
+  
+  sessionvalues$data<-loadData('')
   
   observe({
     if (length(input$queryBuilderSQL)>0)
       sessionvalues$data<-loadData(input$queryBuilderSQL)
   })
   
-  
-
   output$sqlQuery<-renderText({
-    sql<-""
+    sql<-''
     if (length(input$queryBuilderSQL)>0) {
-      if (input$queryBuilderSQL!="")
-        sql<-paste0("where ",input$queryBuilderSQL)
+      if (input$queryBuilderSQL!='')
+        sql<-paste0('where ',input$queryBuilderSQL)
     }
-    paste0("select * from datatable ",sql)
+    paste0('select * from datatable ',sql)
   })
   
   output$queryBuilderWidget<-renderQueryBuildR({
     data<-sessionvalues$data
-    load("filters.Rdata")
+    load('filters.Rdata')
     rules<-NULL
     queryBuildR(rules,filters)
   })
@@ -39,7 +31,7 @@ shinyServer(function(input, output, session) {
     action <- dataTableAjax(session, data,rownames=F)
     
     DT::datatable(data, rownames=F, 
-              extensions = c("Buttons", "Scroller", "ColReorder", "FixedColumns"), 
+              extensions = c('Buttons', 'Scroller', 'ColReorder', 'FixedColumns'), 
               options = list(
                 dom= 'itp',
                 ajax = list(url = action),
@@ -50,7 +42,7 @@ shinyServer(function(input, output, session) {
                 scroller = TRUE, 
                 colReorder = TRUE, 
                 fixedColumns = TRUE, 
-                buttons = c("copy", "csv", "excel", "pdf", "print", "colvis")
+                buttons = c('copy', 'csv', 'excel', 'pdf', 'print', 'colvis')
               )
     )
   }, server = TRUE)
@@ -66,27 +58,28 @@ shinyServer(function(input, output, session) {
         renderDataTable({
           #browser()
           out <- y %>% 
-            dplyr::mutate_(val=1) %>% 
-            reshape2::dcast(Study_Type + STUDYID + DOMAIN ~ LABEL,value.var='val')
+            dplyr::mutate(COLS = sprintf("%s\n[%s]",LABEL,variable),val=1) %>% 
+            reshape2::dcast(Study_Type + STUDYID + DOMAIN ~ COLS,value.var='val')
           
           if(input$complete)
             out <- out %>% 
             dplyr::filter_(~complete.cases(.))
           
+          f<<-out
           
           DT::datatable(out,
-                        extensions = c("Buttons", "Scroller", "ColReorder", "FixedColumns"), 
-                        filter = "top", 
+                        extensions = c('Buttons', 'Scroller', 'ColReorder', 'FixedColumns'), 
+                        filter = 'top', 
                         options = list(
                           deferRender = TRUE, 
                           scrollX = TRUE, 
                           pageLength = 50, 
                           scrollY = 500, 
                           scroller = TRUE, 
-                          dom = "Bfrtip", 
+                          dom = 'Bfrtip', 
                           colReorder = TRUE, 
                           fixedColumns = TRUE, 
-                          buttons = c("copy", "csv", "excel", "pdf", "print", "colvis")
+                          buttons = c('copy', 'csv', 'excel', 'pdf', 'print', 'colvis')
                         ))
           
         }) 

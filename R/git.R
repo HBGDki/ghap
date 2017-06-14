@@ -107,8 +107,23 @@ get_study_list <- function() {
 #' @param id the study ID - this can either be a short ID or long ID which are found in the ID columns of the result of \code{\link{get_study_list}} or \code{\link{get_study_list_anthro}}
 #' @param defin boolean specifying whether to read in the data definition instead of the data - default is FALSE
 #' @param guess_max parameter passed on to \code{\link[readr]{read_csv}}
+#' @param ... arguments passed on to \code{\link{sparse_ghap}}
 #'
-#' @details This function takes a study ID and if there is not a git repository checked out for it, it will check out the respository and read and return the appropriate data file. If the repository is checked out, it will pull any updates to the data and then read and return the appropriate data file. In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
+#' @details This function takes a study ID and if there is not a git repository checked out for it, 
+#' it will check out the respository and read and return the appropriate data file. If the repository is checked out, 
+#' it will pull any updates to the data and then read and return the appropriate data file. 
+#' In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. 
+#' In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
+#' arguments that can be passed to \code{\link{sparse_ghap}} are:
+#' \tabular{ll}{
+#' \strong{Arguments} \tab  \cr
+#' queries \tab character, vector of repository subdirectories to fetch         \cr
+#' create  \tab boolean, create a new git clone?, Default: TRUE                 \cr
+#' append  \tab boolean, append new lines to sparse-checkout file, Default: TRUE\cr
+#' remote  \tab character, alias of the remote, Default: 'origin'               \cr
+#' branch  \tab character, alias of the branch, Default: 'master'               
+#'}
+#' 
 #'
 #' @export
 #' @examples
@@ -116,7 +131,7 @@ get_study_list <- function() {
 #' studies <- get_study_list_anthro()
 #' wsb <- use_study("wsb")
 #' }
-use_study <- function(id, defin = FALSE, guess_max = 100000) {
+use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
   path <- get_git_base_path()
 
   studies <- get_study_list()
@@ -128,7 +143,7 @@ use_study <- function(id, defin = FALSE, guess_max = 100000) {
   }
 
   grant_folder <- studies$grant_folder[idx]
-  update_repo(grant_folder)
+  update_repo(grant_folder, ...)
 
   visapps <- get_study_list_anthro()
   va_idx <- which(visapps$study_id == studies$study_id[idx])
@@ -186,21 +201,25 @@ use_study <- function(id, defin = FALSE, guess_max = 100000) {
     }
   }
 
-  message("Reading ", dat_path)
-  d <- suppressMessages(readr::read_csv(dat_path, guess_max = guess_max))
-  names(d) <- tolower(names(d))
-
-  # some studies (tanzaniachild2) have this issue:
-  d$sex[d$sex == "male"] <- "Male"
-  d$sex[d$sex == "female"] <- "Female"
-
-  # some studies (tdc) have this issue:
-  d <- dplyr::filter(d, !is.na(subjid))
-
-  # some studies (bogalusa) have this issue: (some NA studyid)
-  d$studyid <- d$studyid[1]
-
-  d
+  
+  if (!is.null(dat_path)) {
+    message("Reading ", dat_path)
+    d <- suppressMessages(readr::read_csv(dat_path, guess_max = guess_max))
+    names(d) <- tolower(names(d))
+  
+    # some studies (tanzaniachild2) have this issue:
+    d$sex[d$sex == "male"] <- "Male"
+    d$sex[d$sex == "female"] <- "Female"
+  
+    # some studies (tdc) have this issue:
+    d <- dplyr::filter(d, !is.na(subjid))
+  
+    # some studies (bogalusa) have this issue: (some NA studyid)
+    d$studyid <- d$studyid[1]
+  
+    d
+  }
+   
 }
 
 #' Get the path for the Vis-AdHocs repository
@@ -337,15 +356,27 @@ git_setup <- function() {
 
 #### internal ####
 
-update_repo <- function(grant_folder) {
+update_repo <- function(grant_folder, ...) {
   path <- get_git_base_path()
-
+  
+  opts <- list(...)
+  
+  
   repo_path <- file.path(path, "hbgd", grant_folder)
+  
   if (!dir.exists(repo_path)) {
     dir.create(repo_path, recursive = TRUE, showWarnings = FALSE)
-    message("Checking out 'hbgd/", grant_folder, "' repo...")
+    if(is.null(opts$queries)) opts$queries='*'
+    if(is.null(opts$create))  opts$create=TRUE
+    if(is.null(opts$append))  opts$append=FALSE
+    
+    message("Checking out ",paste(opts$queries,collapse=' , ')," from repository hbgd/", grant_folder, "'...")
+    
     nm <- paste0("https://git.ghap.io/stash/scm/hbgd/", grant_folder, ".git")
-    res <- system(sprintf("git clone %s %s", nm, repo_path))
+    #res <- system(sprintf("git clone %s %s", nm, repo_path))
+    
+    res<-sparse_ghap(repo_url = nm, repo = file.path("hbgd", grant_folder), queries = opts$queries,create=opts$create, append = opts$append)
+    
     if (res == 128) {
       check_git_credentials()
       unlink(repo_path, recursive = TRUE)
@@ -353,6 +384,23 @@ update_repo <- function(grant_folder) {
     }
   } else {
     message("Checking for updates to hbgd/", grant_folder, "'")
+    
+    if(is.null(opts$create))  opts$create=FALSE
+    if(is.null(opts$append))  opts$append=FALSE
+    
+    if(is.null(opts$queries)){
+      opts$queries=readLines(file.path(repo_path,'.git/info/sparse-checkout'))
+    }else{
+      if(opts$append){
+        qu <- unique(c(readLines(file.path(repo_path,'.git/info/sparse-checkout')),opts$queries))
+        message("Updating checkout to ",paste(qu,collapse=' , ')," from repository hbgd/", grant_folder, "'...") 
+      }else{
+        message("Updating checkout to ",paste(opts$queries,collapse=' , ')," from repository hbgd/", grant_folder, "'...") 
+      }
+    }
+    
+    
+    sparse_ghap(repo_url = nm, repo = file.path("hbgd", grant_folder), queries = opts$queries, create=opts$create, append = opts$append)
     res <- system(sprintf("git -C %s pull", repo_path))
     if (res == 128)
       check_git_credentials()

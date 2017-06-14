@@ -1,5 +1,11 @@
-require("RMySQL")
+require(RMySQL)
 library(ghap)
+library(shiny)
+library(DT)
+library(plyr)
+library(reshape2)
+library(queryBuildR)
+library(dplyr)
 
 #forked from https://github.com/Yannael/shinyQueryBuildR
 
@@ -22,3 +28,5 @@ loadData<-function(sql) {
 }
 
 createDB()
+
+f<-list()

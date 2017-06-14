@@ -4,7 +4,7 @@
 \alias{use_study}
 \title{Get data for a given study ID}
 \usage{
-use_study(id, defin = FALSE, guess_max = 1e+05)
+use_study(id, defin = FALSE, guess_max = 1e+05, ...)
 }
 \arguments{
 \item{id}{the study ID - this can either be a short ID or long ID which are found in the ID columns of the result of \code{\link{get_study_list}} or \code{\link{get_study_list_anthro}}}
@@ -12,12 +12,27 @@ use_study(id, defin = FALSE, guess_max = 1e+05)
 \item{defin}{boolean specifying whether to read in the data definition instead of the data - default is FALSE}
 
 \item{guess_max}{parameter passed on to \code{\link[readr]{read_csv}}}
+
+\item{...}{arguments passed on to \code{\link{sparse_ghap}}}
 }
 \description{
 Get data for a given study ID
 }
 \details{
-This function takes a study ID and if there is not a git repository checked out for it, it will check out the respository and read and return the appropriate data file. If the repository is checked out, it will pull any updates to the data and then read and return the appropriate data file. In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
+This function takes a study ID and if there is not a git repository checked out for it, 
+it will check out the respository and read and return the appropriate data file. If the repository is checked out, 
+it will pull any updates to the data and then read and return the appropriate data file. 
+In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. 
+In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
+arguments that can be passed to \code{\link{sparse_ghap}} are:
+\tabular{ll}{
+\strong{Arguments} \tab  \cr
+queries \tab character, vector of repository subdirectories to fetch         \cr
+create  \tab boolean, create a new git clone?, Default: TRUE                 \cr
+append  \tab boolean, append new lines to sparse-checkout file, Default: TRUE\cr
+remote  \tab character, alias of the remote, Default: 'origin'               \cr
+branch  \tab character, alias of the branch, Default: 'master'               
+}
 }
 \examples{
 \dontrun{

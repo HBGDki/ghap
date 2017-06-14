@@ -4,7 +4,7 @@
 \alias{sparse_ghap}
 \title{Create a sparse ghap repository}
 \usage{
-sparse_ghap(repo_url, repo, dirs, create = TRUE, append = TRUE,
+sparse_ghap(repo_url, repo, queries, create = TRUE, append = TRUE,
   remote = "origin", branch = "master")
 }
 \arguments{
@@ -12,7 +12,7 @@ sparse_ghap(repo_url, repo, dirs, create = TRUE, append = TRUE,
 
 \item{repo}{character, path on local disk that repository is cloned to}
 
-\item{dirs}{character, vector of repository subdirectories to fetch}
+\item{queries}{character, vector of repository subdirectories to fetch}
 
 \item{create}{boolean, create a new git clone?, Default: TRUE}
 
@@ -33,12 +33,12 @@ Create a ghap repository that fetches only specified subdirectories and file typ
 \dontrun{
 repo_url='https://git.ghap.io/stash/scm/hbgd/allcrosssectional.git'
 repo='HBGD/allcrosssectional-sparse'
-dirs=sprintf('Main/\%s',c('jobs/*.sas','adam/*.rtf','sdtm/*.rtf')
+queries=sprintf('Main/\%s',c('jobs/*.sas','adam/*.rtf','sdtm/*.rtf')
 #create new sparse clone
-sparse_ghap(repo_url,repo,dirs)
+sparse_ghap(repo_url,repo,queries)
 
 #update sparse-checkout definitions (appends to current list)
-sparse_ghap(repo_url,repo,dirs=c('Main/jobs/*.log'),create=FALSE)
+sparse_ghap(repo_url,repo,queries=c('Main/jobs/*.log'),create=FALSE)
 }
 }
 }
