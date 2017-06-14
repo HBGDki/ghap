@@ -10,7 +10,7 @@ library(dplyr)
 #forked from https://github.com/Yannael/shinyQueryBuildR
 
 createDB<-function() {
-  data(meta_ghap)
+  load('filters.Rdata')
   names(names(meta_ghap))=gsub('[.]','_',names(meta_ghap))
   filters<-getFiltersFromTable(meta_ghap)
   save(file='filters.Rdata',filters)
