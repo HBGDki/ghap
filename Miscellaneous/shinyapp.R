@@ -71,7 +71,6 @@ server <- function(input, output,session) {
     f2<-gsub(sprintf('%s/%s',input$f1,'master'),'',network$tree)
     if(length(f2)>0){
       if(dir.exists(sprintf('%s/.git',input$dirOutput))){
-        browser()
         ghap::sparse_ghap(repo_url = sprintf('https://git.ghap.io/stash/scm/hbgd/%s.git',input$f1),
                           queries = f2,
                              repo = gsub('../../GHAP/QuantSci/git/','',input$dirOutput),
