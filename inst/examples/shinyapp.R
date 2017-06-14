@@ -27,7 +27,7 @@ names(tips.studies)=file.path(studies[['study_id']],'master')
 
 tips=c(tips.folders,tips.studies)
 
-tree.list<-unlist(sapply(dir('../../GHAP/QuantSci/git/HBGD'),function(i) file.path(i,vcs::ls_remote(sprintf('../../GHAP/QuantSci/git/HBGD/%s',i),vcs='git'))))
+tree.list<-unlist(sapply(dir(file.path(get_git_base_path(),'HBGD')),function(i) file.path(i,vcs::ls_remote(file.path(get_git_base_path(),sprintf('HBGD/%s',i)),vcs='git'))))
 
 
 server <- function(input, output,session) {
@@ -49,13 +49,13 @@ server <- function(input, output,session) {
   
   observeEvent(input$f1,{
     output$txt<-renderUI({
-      textInput('dirOutput','',placeholder = 'path of checkout',value = sprintf('../../GHAP/QuantSci/git/HBGD/%s',input$f1))
+      textInput('dirOutput','',placeholder = 'path of checkout',value = file.path(get_git_base_path(),sprintf('HBGD/%s',input$f1)))
     })  
   })
   
   observeEvent(input$f1,{
     output$btn<-renderUI({
-      txt<-ifelse(dir.exists(sprintf('../../GHAP/QuantSci/git/HBGD/%s/.git',input$f1)),'Update sparse checkout','Create Sparse Checkout')
+      txt<-ifelse(dir.exists(file.path(get_git_base_path(),sprintf('HBGD/%s',input$f1))),'Update sparse checkout','Create Sparse Checkout')
       actionButton('createRepo',txt)      
     })
 
@@ -63,8 +63,8 @@ server <- function(input, output,session) {
   
   
   output$tree <- jsTree::renderJsTree({
-    obj=vcs::ls_remote(sprintf('../../GHAP/QuantSci/git/HBGD/%s',input$f1),vcs='git')
-    jsTree::jsTree(obj = obj,remote_repo = input$f1,vcs='git',tooltips = tips,vcs::diff_head(sprintf('../../GHAP/QuantSci/git/HBGD/%s',input$f1),vcs='git',show = FALSE))
+    obj=vcs::ls_remote(file.path(get_git_base_path(),sprintf('HBGD/%s',input$f1)),vcs='git')
+    jsTree::jsTree(obj = obj,remote_repo = input$f1,vcs='git',tooltips = tips,vcs::diff_head(file.path(get_git_base_path(),sprintf('HBGD/%s',input$f1)),vcs='git',show = FALSE))
   })
   
   observeEvent(c(input$createRepo),{
@@ -73,7 +73,7 @@ server <- function(input, output,session) {
       if(dir.exists(sprintf('%s/.git',input$dirOutput))){
         ghap::sparse_ghap(repo_url = sprintf('https://git.ghap.io/stash/scm/hbgd/%s.git',input$f1),
                           queries = f2,
-                             repo = gsub('../../GHAP/QuantSci/git/','',input$dirOutput),
+                             repo = gsub(get_git_base_path(),'',input$dirOutput),
                              create = FALSE,
                              append = FALSE)
       }else{
@@ -88,7 +88,7 @@ server <- function(input, output,session) {
 }
 
 ui <- fluidPage(
-  selectInput(inputId = 'f1',label = 'choose repo',choices = dir('../../GHAP/QuantSci/git/HBGD'),selected = dir('../../GHAP/QuantSci/git/HBGD')[1]),
+  selectInput(inputId = 'f1',label = 'choose repo',choices = dir(file.path(get_git_base_path(),'HBGD')),selected = dir(file.path(get_git_base_path(),'HBGD'))[1]),
   uiOutput('btn'),
   uiOutput('txt'),
   verbatimTextOutput(outputId = "results"),
