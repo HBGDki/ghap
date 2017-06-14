@@ -8,6 +8,7 @@ library(queryBuildR)
 library(dplyr)
 
 #forked from https://github.com/Yannael/shinyQueryBuildR
+load('filters.Rdata')
 
 createDB<-function() {
   load('filters.Rdata')
