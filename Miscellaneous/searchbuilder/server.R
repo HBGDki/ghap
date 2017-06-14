@@ -1,3 +1,4 @@
+load('filters.Rdata')
 shinyServer(function(input, output, session) {
   
   sessionvalues <- reactiveValues()
