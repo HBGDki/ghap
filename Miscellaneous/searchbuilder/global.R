@@ -14,6 +14,7 @@ library(dplyr)
 
 #forked from https://github.com/Yannael/shinyQueryBuildR
 load('filters.Rdata')
+load('meta_ghap.Rdata')
 
 createDB<-function() {
   load('filters.Rdata')
