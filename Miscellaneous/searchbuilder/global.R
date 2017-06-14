@@ -10,7 +10,6 @@ if(!grepl('queryBuildR',inst.pkg)){
 sapply(inst.pkg,function(x) install.packages(x,))
 
 require(RMySQL)
-library(ghap)
 library(shiny)
 library(DT)
 library(plyr)
