@@ -116,7 +116,7 @@ get_study_list <- function() {
 #' studies <- get_study_list_anthro()
 #' wsb <- use_study("wsb")
 #' }
-use_study <- function(id, defin = FALSE, guess_max = 100000) {
+use_study <- function(id, defin = FALSE, guess_max = -1) {
   path <- get_git_base_path()
 
   studies <- get_study_list()
@@ -187,6 +187,9 @@ use_study <- function(id, defin = FALSE, guess_max = 100000) {
   }
 
   message("Reading ", dat_path)
+  if (identical(guess_max, -1)) {
+    guess_max <- R.utils::countLines(dat_path)
+  }
   d <- suppressMessages(readr::read_csv(dat_path, guess_max = guess_max))
   names(d) <- tolower(names(d))
 
