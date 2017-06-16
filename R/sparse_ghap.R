@@ -35,12 +35,15 @@ sparse_ghap <- function(repo_url, repo, queries, create = TRUE, append = TRUE, r
   
   if (create) {
     
-    # New repository
+    if(!'.git'%in%dir(all.files = TRUE)){
+      # New repository
+      system("git init")
+      res <- system(sprintf("git remote add -f %s %s", remote, repo_url))
+      if(res==128) return(128)
+    }
     
-    system("git init")
-    res <- system(sprintf("git remote add -f %s %s", remote, repo_url))
-    if(res==128) return(128)
     system("git config core.sparsecheckout true")
+    if(!dir.exists('.git/info')) dir.create('.git/info')
     cat(queries, file = ".git/info/sparse-checkout", sep = "\n")
     system(sprintf("git fetch %s --depth 1", remote))
     system(sprintf("git merge %s/%s", remote,branch))
@@ -64,9 +67,9 @@ sparse_ghap <- function(repo_url, repo, queries, create = TRUE, append = TRUE, r
       
     }
     
-    system("git read-tree -mu HEAD")
-    
   }
+  
+  system("git read-tree -mu HEAD")
   
   setwd(thisDir)
 }

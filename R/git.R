@@ -99,7 +99,7 @@ get_study_list <- function() {
   nms <- nms[!grepl("inactive", nms)]
   studies <- dplyr::select(studies, dplyr::one_of(nms))
   studies$fstudy_id <- fix_study_id(studies$study_id)
-  studies
+  invisible(studies)
 }
 
 #' Get data for a given study ID
@@ -436,3 +436,16 @@ stop_nice <- function(...) {
 }
 
 is_linux <- function() Sys.info()["sysname"] == "Linux"
+
+#'@export
+git_info <- function(study_id,parent_dir='HBGD'){
+  basepath <- normalizePath(get_git_base_path(),winslash = '/')
+  x <- system(sprintf('git --git-dir %s/.git config --list',file.path(basepath,parent_dir,study_id)),intern=TRUE)
+  sapply(strsplit(x,'='),function(y){
+    val=y[-1]
+    if(val=='false') val=FALSE
+    if(val=='true') val=TRUE
+    if(!grepl('\\D',val)) val=as.numeric(val)
+    split(val,y[1]) 
+  })
+}
