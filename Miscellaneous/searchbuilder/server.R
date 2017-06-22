@@ -28,7 +28,7 @@ shinyServer(function(input, output, session) {
   
   output$table<-renderDataTable({
     data<-sessionvalues$data
-    colnames(data)<-as.vector(sapply(colnames(data),idToName))
+    colnames(data)<-as.vector(sapply(colnames(data),function(x) gsub('[_.]',' ',x)))
     action <- dataTableAjax(session, data,rownames=F)
     
     DT::datatable(data, rownames=F, 
