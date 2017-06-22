@@ -237,7 +237,7 @@ shinyServer(function(input, output, session) {
     study<-sessionvalues$data%>%count(STUDY_ID_SHORT,STUDY_REPOSITORY_NAME)
     study_name<-study$STUDY_ID_SHORT[which(study$STUDY_REPOSITORY_NAME==input$study_tree)]
     f2<-'*.txt'
-    browser()
+
     if(length(f2)>0){
       if(dir.exists(dirGit)){
         f2<-gsub(sprintf('%s/%s',input$study_tree,'master'),'',network$tree)
