@@ -1,6 +1,6 @@
 toInstall=c('RMySQL','shiny','DT','plyr','reshape2','queryBuildR','dplyr')
 
-if(!'queryBuildR'%in%rownames(installed.packages())) devtools::install_github('Yannael/queryBuildR')
+if(!'queryBuildR'%in%rownames(installed.packages())) devtools::install_github('yonicd/queryBuildR')
 
 sapply(toInstall[!toInstall%in%rownames(installed.packages())],function(x) install.packages(x))
 

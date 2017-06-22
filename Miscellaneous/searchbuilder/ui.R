@@ -1,5 +1,4 @@
 shiny::shinyUI(shiny::fluidPage(
-   useShinyjs(),
   shiny::sidebarLayout(
     shiny::sidebarPanel(
       shiny::h3('Define and apply filters'),
