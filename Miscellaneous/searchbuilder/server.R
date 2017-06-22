@@ -23,7 +23,7 @@ shinyServer(function(input, output, session) {
     data<-sessionvalues$data
     load('filters.Rdata')
     rules<-NULL
-    queryBuildR(rules,filters)
+    queryBuildR(filters)
   })
   
   output$table<-renderDataTable({

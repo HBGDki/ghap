@@ -25,7 +25,8 @@ createDB<-function() {
   load('filters.Rdata')
   nm=names(meta_ghap)
   meta_ghap=meta_ghap[,c('STUDY_TYPE',nm[nm!='STUDY_TYPE'])]
-  filters<-getFiltersFromTable(meta_ghap)
+  col_opts <- sapply(names(meta_ghap)[sapply(meta_ghap,class)=='character'],function(x) list(type='select',plugin='selectize'),simplify = FALSE)
+  filters<-getFiltersFromTable(data = meta_ghap,column_opts = col_opts)
   save(file='filters.Rdata',filters)
   datadb<-dbConnect(RSQLite::SQLite(), "data/data.db")
   dbWriteTable(datadb,"datatable",meta_ghap,row.names=F,overwrite=T)
