@@ -16,4 +16,7 @@ Suggests:
     sinew,
     testthat
 RoxygenNote: 6.0.1
-Remotes: hafen/osfr
+Remotes: 
+    hafen/osfr
+    metrumresearchgroup/jsTree
+    metrumresearchgroup/vcs
