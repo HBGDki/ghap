@@ -1,0 +1,4 @@
+Name: searchbuilder
+Description: Search and Maintain GHAP repositories
+Binding: searchbuilder
+Interactive: true
