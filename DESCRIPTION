@@ -1,6 +1,6 @@
 Package: ghap
 Title: Utilities for working on GHAP
-Version: 0.0.4
+Version: 0.0.5
 Authors@R: c(person("Ryan", "Hafen", email = "rhafen@gmail.com", role = c("aut", "cre")),
               person("Jonathan", "Sidi", email = "yonis@metrumrg.com", role = c("ctb")))
 Description: Utilities for working in GHAP. Not a useful package for the general

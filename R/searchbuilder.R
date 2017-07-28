@@ -70,6 +70,7 @@ get_study_n<-function(current_query){
 #' @importFrom jsTree renderJsTree jsTree jsTreeOutput
 #' @importFrom miniUI miniPage gadgetTitleBar miniTitleBarButton miniContentPanel
 #' @importFrom reshape2 dcast
+# @importFrom DT dataTableOutput renderDataTable datatable
 #' @import shiny
 #' @importFrom vcs ls_remote diff_head
 searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width = 3000,height = 2000)){
