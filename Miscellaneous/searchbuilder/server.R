@@ -14,7 +14,7 @@ shinyServer(function(input, output, session) {
     sql<-''
     if (length(input$queryBuilderSQL)>0) {
       if (input$queryBuilderSQL!='')
-        sql<-paste0('where ',input$queryBuilderSQL)
+        sql<-paste0('where ', input$queryBuilderSQL)
     }
     paste0('select * from datatable ',sql)
   })

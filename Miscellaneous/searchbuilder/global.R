@@ -1,8 +1,8 @@
-toInstall=c('RMySQL','shiny','DT','plyr','reshape2','queryBuildR','jsTree','vcs','dplyr')
+toInstall=c('RMySQL','shiny','DT','plyr','reshape2','dplyr')
 
-if(!'queryBuildR'%in%rownames(installed.packages())) devtools::install_github('yonicd/queryBuildR')
-if(!'jsTree'%in%rownames(installed.packages())) devtools::install_github('metrumresearchgroup/jsTree')
-if(!'vcs'%in%rownames(installed.packages())) devtools::install_github('metrumresearchgroup/vcs')
+devtools::install_github('yonicd/queryBuildR')
+devtools::install_github('metrumresearchgroup/jsTree')
+devtools::install_github('metrumresearchgroup/vcs')
 
 sapply(toInstall[!toInstall%in%rownames(installed.packages())],function(x) install.packages(x))
 

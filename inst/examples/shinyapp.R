@@ -3,7 +3,7 @@ library(vcs)
 library(ghap)
 library(jsTree)
 # 
-#studies=ghap::get_study_list()
+studies=ghap::get_study_list()
 
 tips.folders=c(adam='Analysis-Ready data derived form SDTM data sets (USERS: ALL)',
                docs='Study documentation (USERS: ALL)',
