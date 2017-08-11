@@ -387,6 +387,8 @@ update_repo <- function(grant_folder, ...) {
     
     if(is.null(opts$create))  opts$create=FALSE
     if(is.null(opts$append))  opts$append=FALSE
+    if(!file.exists(file.path(repo_path,'.git/info/sparse-checkout'))) cat('*',file=file.path(repo_path,'.git/info/sparse-checkout'),sep = '\n',append = FALSE)
+    
     
     if(is.null(opts$queries)){
       opts$queries=readLines(file.path(repo_path,'.git/info/sparse-checkout'))
