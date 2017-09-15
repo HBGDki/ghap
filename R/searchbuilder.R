@@ -4,19 +4,19 @@ createDB<-function(MYDIR) {
   nm=names(meta_ghap)
   meta_ghap=meta_ghap[,c('STUDY_TYPE',nm[nm!='STUDY_TYPE'])]
   col_opts <- sapply(names(meta_ghap)[sapply(meta_ghap,class)=='character'],function(x) list(type='select',plugin='selectize'),simplify = FALSE)
-  filters<-getFiltersFromTable(data = meta_ghap,column_opts = col_opts)
+  filters<-queryBuildR::getFiltersFromTable(data = meta_ghap,column_opts = col_opts)
   save(file=file.path(MYDIR,'filters.Rdata'),filters)
 
-  datadb<-dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
-  dbWriteTable(datadb,"datatable",meta_ghap,row.names=F,overwrite=TRUE)
-  dbDisconnect(datadb)
+  datadb<-DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
+  DBI::dbWriteTable(datadb,"datatable",meta_ghap,row.names=F,overwrite=TRUE)
+  DBI::dbDisconnect(datadb)
 }
 
 loadData<-function(sql,MYDIR) {
   if (sql!="") sql<-paste0("where ",sql)
-  datadb<-dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
-  datacontent<-dbGetQuery(datadb,paste0("select * from datatable ",sql))
-  dbDisconnect(datadb)
+  datadb<-DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
+  datacontent<-DBI::dbGetQuery(datadb,paste0("select * from datatable ",sql))
+  DBI::dbDisconnect(datadb)
   datacontent
 }
 
@@ -30,8 +30,8 @@ get_study_n<-function(current_query){
     summarise_at(funs(paste0(sprintf("'%s'",.),collapse=',')),.vars=vars(STUDY_ID))
   
   
-  if(file.exists('../data/ghap_longitudinal.sqlite3')) long_db<-dbConnect(RSQLite::SQLite(), "../data/ghap_longitudinal.sqlite3")
-  if(file.exists('../data/ghap_cross_sectional.sqlite3')) cross_db<-dbConnect(RSQLite::SQLite(), "../data/ghap_cross_sectional.sqlite3")
+  if(file.exists('../data/ghap_longitudinal.sqlite3')) long_db<-DBI::dbConnect(RSQLite::SQLite(), "../data/ghap_longitudinal.sqlite3")
+  if(file.exists('../data/ghap_cross_sectional.sqlite3')) cross_db<-DBI::dbConnect(RSQLite::SQLite(), "../data/ghap_cross_sectional.sqlite3")
   
   
   get_n<-n_summ%>%ddply(.(STUDY_TYPE,DOMAIN,VARIABLE),.fun=function(x){
@@ -45,8 +45,8 @@ get_study_n<-function(current_query){
     
   },.progress = 'text')
   
-  dbDisconnect(long_db)
-  dbDisconnect(cross_db)
+  DBI::dbDisconnect(long_db)
+  DBI::dbDisconnect(cross_db)
   
   get_n%>%select(-VARIABLE)
 }
@@ -80,7 +80,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
   if(!dir.exists(MYDIR)){
     dir.create(MYDIR)
     dir.create(file.path(MYDIR,'data'))
-    dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
+    DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
   }
   
   createDB(MYDIR)
@@ -94,7 +94,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
         shiny::sidebarLayout(
           shiny::sidebarPanel(
             shiny::h3('Define and apply filters'),
-            queryBuildROutput('queryBuilderWidget',height='100%'),
+            queryBuildR::queryBuildROutput('queryBuilderWidget',height='100%'),
             shiny::actionButton('queryApply', label = 'Apply filters'),
             shiny::tags$script("
                                function getSQLStatement() {
@@ -164,11 +164,11 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
       paste0('select * from datatable ',sql)
     })
     
-    output$queryBuilderWidget<-renderQueryBuildR({
+    output$queryBuilderWidget<-queryBuildR::renderQueryBuildR({
       data<-sessionvalues$data
       load(file.path(MYDIR,'filters.Rdata'))
       rules<-NULL
-      queryBuildR(filters)
+      queryBuildR::queryBuildR(filters)
     })
     
     output$table<-DT::renderDataTable({
