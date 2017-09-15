@@ -200,7 +200,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
       
       data <- sessionvalues$data
       colnames(data) <- as.vector(sapply(colnames(data),function(x) gsub('[_.]',' ',x)))
-      action <- dataTableAjax(session, data,rownames=F)
+      action <- DT::dataTableAjax(session, data,rownames=F)
       
      DT::datatable(data, rownames=F, 
                     extensions = c('Buttons', 'Scroller', 'ColReorder', 'FixedColumns'),
