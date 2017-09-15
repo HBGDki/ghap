@@ -1,28 +1,33 @@
-createDB<-function(MYDIR) {
+createDB <- function(MYDIR) {
 
-  if(file.exists(file.path(MYDIR,'filters.Rdata'))) load(file.path(MYDIR,'filters.Rdata'))
-  nm=names(meta_ghap)
-  meta_ghap=meta_ghap[,c('STUDY_TYPE',nm[nm!='STUDY_TYPE'])]
+  if( file.exists(file.path(MYDIR,'filters.Rdata')) ) 
+    load(file.path(MYDIR,'filters.Rdata'))
+  
+  nm <- names(meta_ghap)
+  
+  meta_ghap <- meta_ghap[,c('STUDY_TYPE',nm[nm!='STUDY_TYPE'])]
   col_opts <- sapply(names(meta_ghap)[sapply(meta_ghap,class)=='character'],function(x) list(type='select',plugin='selectize'),simplify = FALSE)
-  filters<-queryBuildR::getFiltersFromTable(data = meta_ghap,column_opts = col_opts)
+  filters <- queryBuildR::getFiltersFromTable(data = meta_ghap,column_opts = col_opts)
   save(file=file.path(MYDIR,'filters.Rdata'),filters)
 
-  datadb<-DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
+  datadb <- DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
   DBI::dbWriteTable(datadb,"datatable",meta_ghap,row.names=F,overwrite=TRUE)
   DBI::dbDisconnect(datadb)
 }
 
-loadData<-function(sql,MYDIR) {
-  if (sql!="") sql<-paste0("where ",sql)
-  datadb<-DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
-  datacontent<-DBI::dbGetQuery(datadb,paste0("select * from datatable ",sql))
+loadData <- function(sql,MYDIR) {
+  if ( sql!="" ) 
+    sql<-paste0("where ",sql)
+  
+  datadb <- DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
+  datacontent <- DBI::dbGetQuery(datadb,paste0("select * from datatable ",sql))
   DBI::dbDisconnect(datadb)
   datacontent
 }
 
 get_study_n<-function(current_query){
   
-  n_summ<-current_query%>%
+  n_summ <- current_query%>%
     select(STUDY_TYPE,DOMAIN,STUDY_ID,VARIABLE=STUDY_VARIABLE)%>%distinct%>%
     group_by(STUDY_TYPE,DOMAIN,STUDY_ID)%>%
     summarise_at(funs(paste0(sprintf('%s IS NOT NULL',.),collapse=' AND ')),.vars=vars(VARIABLE))%>%
@@ -30,17 +35,23 @@ get_study_n<-function(current_query){
     summarise_at(funs(paste0(sprintf("'%s'",.),collapse=',')),.vars=vars(STUDY_ID))
   
   
-  if(file.exists('../data/ghap_longitudinal.sqlite3')) long_db<-DBI::dbConnect(RSQLite::SQLite(), "../data/ghap_longitudinal.sqlite3")
-  if(file.exists('../data/ghap_cross_sectional.sqlite3')) cross_db<-DBI::dbConnect(RSQLite::SQLite(), "../data/ghap_cross_sectional.sqlite3")
+  if( file.exists('../data/ghap_longitudinal.sqlite3') ) 
+    long_db <- DBI::dbConnect(RSQLite::SQLite(), "../data/ghap_longitudinal.sqlite3")
   
+  if( file.exists('../data/ghap_cross_sectional.sqlite3') ) 
+    cross_db <- DBI::dbConnect(RSQLite::SQLite(), "../data/ghap_cross_sectional.sqlite3")
   
-  get_n<-n_summ%>%ddply(.(STUDY_TYPE,DOMAIN,VARIABLE),.fun=function(x){
+  get_n < -n_summ%>%ddply(.(STUDY_TYPE,DOMAIN,VARIABLE),.fun=function(x){
     q <- sprintf("select STUDYID as STUDY_ID, count(DISTINCT SUBJID) as SUBJID_N from %s WHERE %s AND STUDY_ID IN (%s) GROUP BY STUDY_ID",x$DOMAIN,x$VARIABLE,x$STUDY_ID)
     
-    if(x$STUDY_TYPE=='Longitudinal'){
+    if( x$STUDY_TYPE=='Longitudinal' ){
+      
       DBI::dbGetQuery(conn=long_db,q)
+      
     }else{
+      
       DBI::dbGetQuery(conn=cross_db,q)
+      
     }
     
   },.progress = 'text')
@@ -77,18 +88,22 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
   
   MYDIR <- file.path(tempdir(),'mydir')
   
-  if(!dir.exists(MYDIR)){
+  if( !dir.exists(MYDIR) ){
+    
     dir.create(MYDIR)
     dir.create(file.path(MYDIR,'data'))
     DBI::dbConnect(RSQLite::SQLite(), file.path(MYDIR,"data/data.db"))
+    
   }
   
   createDB(MYDIR)
   
   ui <- miniUI::miniPage(
+    
     miniUI::gadgetTitleBar('GHAP Search Builder',
                            left = miniUI::miniTitleBarButton(inputId = "qt","Quit",primary = TRUE),
                            right=NULL),
+    
     miniUI::miniContentPanel(
       shiny::fluidPage(
         shiny::sidebarLayout(
@@ -119,6 +134,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
             
             width=4
             ),
+          
           shiny::mainPanel(
             shiny::fluidRow(
               shiny::uiOutput('table_tag'),
@@ -148,32 +164,41 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
     sessionvalues <- reactiveValues()
     network <- reactiveValues()
     
-    sessionvalues$data<-loadData(sql = '',MYDIR = MYDIR)
+    sessionvalues$data <- loadData(sql = '',MYDIR = MYDIR)
     
     observe({
-      if (length(input$queryBuilderSQL)>0)
+      
+      if ( length(input$queryBuilderSQL)>0 )
         sessionvalues$data<-loadData(input$queryBuilderSQL,MYDIR = MYDIR)
+      
     })
     
-    output$sqlQuery<-renderText({
-      sql<-''
-      if (length(input$queryBuilderSQL)>0) {
-        if (input$queryBuilderSQL!='')
-          sql<-paste0('where ', input$queryBuilderSQL)
+    output$sqlQuery <- renderText({
+      
+      sql <- ''
+      
+      if ( length(input$queryBuilderSQL)>0 ) {
+        if ( input$queryBuilderSQL!='' )
+          sql <- paste0('where ', input$queryBuilderSQL)
       }
+      
       paste0('select * from datatable ',sql)
+      
     })
     
-    output$queryBuilderWidget<-queryBuildR::renderQueryBuildR({
-      data<-sessionvalues$data
+    output$queryBuilderWidget <-queryBuildR::renderQueryBuildR({
+      
+      data <- sessionvalues$data
       load(file.path(MYDIR,'filters.Rdata'))
-      rules<-NULL
+      rules <- NULL
       queryBuildR::queryBuildR(filters)
+      
     })
     
-    output$table<-DT::renderDataTable({
-      data<-sessionvalues$data
-      colnames(data)<-as.vector(sapply(colnames(data),function(x) gsub('[_.]',' ',x)))
+    output$table <- DT::renderDataTable({
+      
+      data <- sessionvalues$data
+      colnames(data) <- as.vector(sapply(colnames(data),function(x) gsub('[_.]',' ',x)))
       action <- dataTableAjax(session, data,rownames=F)
       
      DT::datatable(data, rownames=F, 
@@ -195,13 +220,15 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
     }, server = TRUE)
     
     observeEvent(input$btn_copy,{
+      
       y <- loadData(input$queryBuilderSQL,MYDIR = MYDIR)
       
       y <- y%>%dplyr::count(STUDY_TYPE,STUDY_ID)
       
       y_copy <- y$STUDY_ID
       
-      if(length(input$study_select_rows_selected)>0) y_copy<-y_copy[input$study_select_rows_selected]
+      if( length(input$study_select_rows_selected)>0 ) 
+        y_copy <- y_copy[input$study_select_rows_selected]
       
       writeClipboard(y_copy)
     })
@@ -210,11 +237,14 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
       
       y <- loadData(input$queryBuilderSQL,MYDIR = MYDIR)
       
-      if(nrow(y)==0){
+      if( nrow(y)==0 ){
+        
         output$zero_out<-shiny::renderText('Query matched zero rows')
+        
       }else{
+        
         output$zero_out<-shiny::renderText('')
-        if(nrow(y)<nrow(meta_ghap)){
+        if( nrow(y)<nrow(meta_ghap) ){
           
           output$table_tag<-renderUI({
             list(shiny::tags$h3('Studies Query Output'),
@@ -226,7 +256,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
                  )
           })
           
-          output$btn_copy<-renderUI({
+          output$btn_copy <- renderUI({
             list(shiny::actionButton(inputId = 'btn_copy',label = 'Copy List of Studies to clipboard'),
                  shiny::helpText('Use this button to copy to the clipboard the list of studies seen on 
                                  the Studies Query Output table, if any rows are clicked/highlighted on 
@@ -244,14 +274,16 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
               
              
               
-              if(dir.exists('../data')){
-              if(input$get_n){
-                study_n<-get_study_n(y)
-                out<-out%>%left_join(study_n,by=c('STUDY_TYPE','DOMAIN','STUDY_ID'))
+              if( dir.exists('../data') ){
+              if( input$get_n ){
+                
+                study_n <- get_study_n(y)
+                out <- out%>%left_join(study_n,by=c('STUDY_TYPE','DOMAIN','STUDY_ID'))
+                
               }}
               
               
-              if(input$complete)
+              if( input$complete )
                 out <- out %>% 
                   dplyr::filter_(~complete.cases(.))
               
@@ -277,40 +309,46 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
           }
     })
     
-    output$chk_complete_rows<-renderUI({
+    output$chk_complete_rows <- renderUI({
+      
       list(shiny::checkboxInput('complete','Show only complete cases'),
            shiny::helpText('Use this checkbox to filter the Studies Query Output table to show only studies that have all the columns'))
+      
     })
     
-    output$chk_n<-renderUI({
-      if(dir.exists('../data'))
+    output$chk_n <- renderUI({
+      
+      if( dir.exists('../data') )
         list(shiny::checkboxInput('get_n','Show number of subjects per study conditional on query result',value = FALSE),
              shiny::helpText('Use this checkbox to add an additional column to the Studies Query Output table that shows how many unique subjects are in the columns indicated for each study')
         )
+      
     })
     
-    output$chk_tree<-renderUI({
-      if(dir.exists(get_git_base_path()))
+    output$chk_tree <- renderUI({
+      if( dir.exists(get_git_base_path()) )
         list(shiny::hr(),
              shiny::checkboxInput('chk_tree','Visualization of Study Repository Contents',value = FALSE)
         )
     })
     
     observeEvent(input$tree_update,{
-      current_selection<-input$tree_update$.current_tree
-      if(!is.null(current_selection)) network$tree <- jsonlite::fromJSON(current_selection)
+      current_selection <- input$tree_update$.current_tree
+      if( !is.null(current_selection) )
+        network$tree <- jsonlite::fromJSON(current_selection)
     })
     
     observeEvent(input$study_tree,{
       
-      basepath=normalizePath(get_git_base_path(),winslash = '/')
-      dirOutput<-file.path(basepath,'HBGD',input$study_tree)
-      dirGit<- file.path(dirOutput,'.git')
+      basepath <- normalizePath(get_git_base_path(),winslash = '/')
+      dirOutput <- file.path(basepath,'HBGD',input$study_tree)
+      dirGit <- file.path(dirOutput,'.git')
       
       
       
-      if(!dir.exists(dirGit)){
-        output$btn_tree<-renderUI({
+      if( !dir.exists(dirGit) ){
+        
+        output$btn_tree <- renderUI({
           list(shiny::actionButton('btn_tree','Fetch Study'),
                shiny::helpText('Press the Fetch Study button to retrieve 
                                the file directory structure of the study repository 
@@ -318,13 +356,15 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
                )
         })
         
-        output$tree_show<-renderUI({
+        output$tree_show <- renderUI({
           shiny::p('')
         })
         
         
         }else{
-          output$btn_tree<-renderUI({
+          
+          output$btn_tree <- renderUI({
+            
             list(shiny::actionButton('btn_tree','Update Study'),
                  shiny::helpText('Navigate the tree by clicking on folders to open them or using 
                                  the search field above the tree, 
@@ -333,6 +373,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
                                  If there are already files in fetched from the repository 
                                  they will be prechecked for you, uncheck them to remove files.
                                  Press on the Update Study button to invoke the update.'))
+            
           })
           
           
@@ -346,65 +387,73 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
                          sdtm='Data in HBGDki Standardized format (USERS: Data Scientists)'
           )
           
-          basepath=normalizePath(get_git_base_path(),winslash = '/')
-          dirOutput<-file.path(basepath,'HBGD',input$study_tree)
-          dirGit<- file.path(dirOutput,'.git')
+          basepath <- normalizePath(get_git_base_path(),winslash = '/')
+          dirOutput <- file.path(basepath,'HBGD',input$study_tree)
+          dirGit <- file.path(dirOutput,'.git')
           
           output$tree <- jsTree::renderJsTree({
-            path=file.path(basepath,'HBGD',input$study_tree)
-            if(dir.exists(path)){
-              obj=vcs::ls_remote(path = path,vcs='git')
+            path <- file.path(basepath,'HBGD',input$study_tree)
+            
+            if( dir.exists(path) ){
+              obj <- vcs::ls_remote(path = path,vcs='git')
               jsTree::jsTree(obj = obj,
                              remote_repo = input$study_tree,vcs='git',
                              tooltips = tips.folders,
                              nodestate = vcs::diff_head(path,vcs='git',show = FALSE))
             }else{
+              
               shiny::p('')
+              
             }
           })
           
           output$tree_show<-renderUI({
+            
             jsTree::jsTreeOutput(outputId = 'tree')
+            
           })
           }
-      
       
         })
     
     observeEvent(sessionvalues$data,{
       
-      output$study_choose<-renderUI({
-        study<-sessionvalues$data%>%count(STUDY_ID_SHORT,STUDY_REPOSITORY_NAME)
-        study_split<-split(study$STUDY_REPOSITORY_NAME,study$STUDY_ID_SHORT)
+      output$study_choose <- renderUI({
+        study <- sessionvalues$data%>%count(STUDY_ID_SHORT,STUDY_REPOSITORY_NAME)
+        study_split <- split(study$STUDY_REPOSITORY_NAME,study$STUDY_ID_SHORT)
         shiny::selectInput(inputId = 'study_tree',label = 'Select Study to Preview',choices = study_split,selected = study_split[1])
       })    
     })
     
     observeEvent(input$btn_tree,{
-      basepath<-normalizePath(get_git_base_path(),winslash = '/')
-      dirOutput<-file.path(basepath,'HBGD',input$study_tree)
-      dirGit<- file.path(dirOutput,'.git')
-      study<-sessionvalues$data%>%count(STUDY_ID_SHORT,STUDY_REPOSITORY_NAME)
-      study_name<-study$STUDY_ID_SHORT[which(study$STUDY_REPOSITORY_NAME==input$study_tree)]
-      f2<-'*.txt'
+      basepath <- normalizePath(get_git_base_path(),winslash = '/')
+      dirOutput <- file.path(basepath,'HBGD',input$study_tree)
+      dirGit <- file.path(dirOutput,'.git')
+      study <- sessionvalues$data%>%count(STUDY_ID_SHORT,STUDY_REPOSITORY_NAME)
+      study_name <- study$STUDY_ID_SHORT[which(study$STUDY_REPOSITORY_NAME==input$study_tree)]
+      f2 <- '*.txt'
       
-      if(length(f2)>0){
-        if(dir.exists(dirGit)){
-          f2<-gsub(sprintf('%s/%s',input$study_tree,'master'),'',network$tree)
+      if( length(f2)>0 ){
+        if( dir.exists(dirGit) ){
+          f2 <- gsub(sprintf('%s/%s',input$study_tree,'master'),'',network$tree)
           use_study(study_name,
                           queries=f2,
                           create = !'sparse-checkout'%in%basename(dir(dirGit,recursive = TRUE)),
                           append = FALSE)
         }else{
+          
           use_study(study_name,queries=f2)
+          
         }
       }
     })
     
     shiny::observeEvent(input$qt,{
+      
       unlink(MYDIR,recursive = TRUE)
       shiny::stopApp()
       })
+    
       }
   shiny::runGadget(ui, server, viewer = viewer)
 }
