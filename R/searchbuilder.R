@@ -28,7 +28,8 @@ loadData <- function(sql,MYDIR) {
 get_study_n<-function(current_query){
   
   n_summ <- current_query%>%
-    select(STUDY_TYPE,DOMAIN,STUDY_ID,VARIABLE=STUDY_VARIABLE)%>%distinct%>%
+    select_(STUDY_TYPE,DOMAIN,STUDY_ID,VARIABLE=STUDY_VARIABLE)%>%
+    distinct%>%
     group_by(STUDY_TYPE,DOMAIN,STUDY_ID)%>%
     summarise_at(funs(paste0(sprintf('%s IS NOT NULL',.),collapse=' AND ')),.vars=vars(VARIABLE))%>%
     group_by(STUDY_TYPE,DOMAIN,VARIABLE)%>%

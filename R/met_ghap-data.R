@@ -3,28 +3,29 @@
 #'  repositories on ghap
 #' @format A data frame with 9209 rows and 23 variables:
 #' \describe{
-#'   \item{\code{DOMAIN}}{character Domain of study}
-#'   \item{\code{STUDYID}}{character Study ID}
-#'   \item{\code{variable}}{character Variable in Study ID}
-#'   \item{\code{LABEL}}{character Label of variable}
-#'   \item{\code{DOMAIN.LBL}}{character Domain Label}
-#'   \item{\code{DOMAIN.STRUCTURE}}{character Domain Structure}
-#'   \item{\code{Study_ID}}{character Study Id}
-#'   \item{\code{Short_Description}}{character Short description of Study}
-#'   \item{\code{Study_Description}}{character Long description of Study}
-#'   \item{\code{Alternate_ID}}{character Alternative ID of Study}
-#'   \item{\code{Subject_Count}}{integer Number of Subjects in Study}
-#'   \item{\code{Country}}{character Countries that study include}
-#'   \item{\code{Data_Status}}{character QA status of Data}
-#'   \item{\code{Study_Type}}{character Longitudinal or Cross sectional}
-#'   \item{\code{Intervention_Type}}{character Intervention Type}
-#'   \item{\code{Age_Lower_Limit}}{character Lower bound of Age in Study}
-#'   \item{\code{Age_Upper_Limit}}{character Upper bound of Age in Study}
-#'   \item{\code{Start_Year}}{integer Start year of Study}
-#'   \item{\code{Stop_Year}}{integer End year of Study}
-#'   \item{\code{Population}}{character Population of Study}
-#'   \item{\code{Repository_Name}}{character Name of repository that study is in}
-#'   \item{\code{Repository_Subfolder}}{character Subdirectory study is located in}
-#'   \item{\code{Study_URL}}{character Study URL} 
+#'   \item{\code{DOMAIN}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_ID}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_VARIABLE}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_VARIABLE_DESCRIPTION}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{DOMAIN_DESCRIPTION}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{DOMAIN_STRUCTURE}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_ID_SHORT}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_DESCRIPTION_SHORT}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_DESCRIPTION}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_ID_ALTERNATE}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_SUBJECT_COUNT}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_COUNTRY}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{REPOSITORY_DATA_STATUS}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_TYPE}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_INTERVENTION_TYPE}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_AGE_LOWER_LIMIT}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_AGE_UPPER_LIMIT}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_START_YEAR}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_STOP_YEAR}}{integer COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_POPULATION}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_REPOSITORY_NAME}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{REPOSITORY_SUBFOLDER}}{character COLUMN_DESCRIPTION}
+#'   \item{\code{STUDY_URL}}{character COLUMN_DESCRIPTION} 
 #'}
+
 "meta_ghap"
