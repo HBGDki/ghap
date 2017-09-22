@@ -113,6 +113,7 @@ get_study_list <- function() {
 #' @details This function takes a study ID and if there is not a git repository checked out for it, it will check out the respository and read and return the appropriate data file. If the repository is checked out, it will pull any updates to the data and then read and return the appropriate data file. In the case of study IDs associated with \code{\link{get_study_list_anthro}}, the correct data will be returned. In the case of study IDs not in this list but in \code{\link{get_study_list}}, a guess will be made as to which data file is appropriate.
 #'
 #' @importFrom utils tail
+#' @importFrom R.utils countLines
 #' @export
 #' @examples
 #' \dontrun{

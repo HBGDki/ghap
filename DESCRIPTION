@@ -7,7 +7,7 @@ Description: Utilities for working in GHAP. Not a useful package for the general
     public.
 Depends:
     R (>= 3.3.1)
-Imports: dplyr,plyr,tools,xml2,httr,rvest,utils,readr,osfr,grDevices,DT,reshape2,tibble,d3Tree
+Imports: dplyr,plyr,tools,xml2,httr,rvest,utils,readr,osfr,grDevices,DT,reshape2,tibble,d3Tree,R.utils
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
