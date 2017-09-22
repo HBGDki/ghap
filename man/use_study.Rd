@@ -4,7 +4,7 @@
 \alias{use_study}
 \title{Get data for a given study ID}
 \usage{
-use_study(id, defin = FALSE, guess_max = 100000)
+use_study(id, defin = FALSE, guess_max = -1)
 }
 \arguments{
 \item{id}{the study ID - this can either be a short ID or long ID which are found in the ID columns of the result of \code{\link{get_study_list}} or \code{\link{get_study_list_anthro}}}
