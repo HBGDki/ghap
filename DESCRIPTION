@@ -1,13 +1,12 @@
 Package: ghap
 Title: Utilities for working on GHAP
-Version: 0.0.4
+Version: 0.0.5
 Authors@R: c(person("Ryan", "Hafen", email = "rhafen@gmail.com", role = c("aut", "cre")),
               person("Jonathan", "Sidi", email = "yonis@metrumrg.com", role = c("ctb")))
 Description: Utilities for working in GHAP. Not a useful package for the general
     public.
 Depends:
     R (>= 3.3.1)
-Imports:
 Imports: dplyr,plyr,tools,xml2,httr,rvest,utils,readr,osfr,grDevices,DT,reshape2,tibble,d3Tree
 License: MIT + file LICENSE
 Encoding: UTF-8

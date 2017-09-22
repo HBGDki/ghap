@@ -53,7 +53,8 @@ get_study_list_anthro <- function() {
     readr::read_csv(file.path(path, "hbgd/common/VisApps/VisApps.csv")))
   names(tmp) <- tolower(names(tmp))
 
-  tmp2 <- get_study_list()
+  tmp2 <- get_study_list() %>%
+    filter(status != "Obsolete")
   # tmp$study_id %in% tmp2$study_id
   tmp2 <- dplyr::select(tmp2, study_id, short_id, short_description,
     intervention_type, country, fstudy_id)
@@ -97,7 +98,8 @@ get_study_list <- function() {
   nms <- names(studies)
   nms <- setdiff(nms, c("program_folder", "child_count", "mpc", "clinical"))
   nms <- nms[!grepl("inactive", nms)]
-  studies <- dplyr::select(studies, dplyr::one_of(nms))
+  studies <- dplyr::select(studies, dplyr::one_of(nms)) %>%
+    dplyr::filter(status != "Obsolete")
   studies$fstudy_id <- fix_study_id(studies$study_id)
   studies
 }
@@ -125,6 +127,9 @@ use_study <- function(id, defin = FALSE, guess_max = 100000) {
     idx <- which(studies$short_id == id)
     if (length(idx) == 0)
       stop_nice("A study with id '", id, "' could not be found.")
+  } else if (length(idx) > 1) {
+    message("More than one study entry was found with id ", id, ". Using the last one (please check to make sure this is correct.)")
+    idx <- tail(idx, 1)
   }
 
   grant_folder <- studies$grant_folder[idx]

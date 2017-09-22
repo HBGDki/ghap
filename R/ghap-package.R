@@ -1,5 +1,5 @@
 utils::globalVariables(c("country", "fstudy_id", "grant_folder", "intervention_type",
-  "program_folder", "short_description", "short_id", "study_id", "subjid"))
+  "program_folder", "short_description", "short_id", "study_id", "subjid", "status"))
 
 #' ghap.
 #'
