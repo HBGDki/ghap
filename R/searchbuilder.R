@@ -126,6 +126,7 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
             shiny::uiOutput('chk_n'),
             shiny::uiOutput('chk_complete_rows'),
             shiny::uiOutput('btn_copy'),
+            shiny::uiOutput('btn_md'),
             shiny::uiOutput('chk_tree'),
             shiny::conditionalPanel('input.chk_tree==true',
                                     shiny::uiOutput('study_choose'),
@@ -226,12 +227,29 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
       
       y <- y%>%dplyr::count(STUDY_TYPE,STUDY_ID)
       
-      y_copy <- y$STUDY_ID
+      y_copy <- y$STUDY_ID[input$study_select_rows_all]
       
       if( length(input$study_select_rows_selected)>0 ) 
         y_copy <- y_copy[input$study_select_rows_selected]
       
       writeClipboard(y_copy)
+    })
+    
+    observeEvent(input$btn_md,{
+      
+      out <- loadData(input$queryBuilderSQL,MYDIR = MYDIR) %>% 
+        dplyr::mutate(COLS = sprintf("%s\n[%s]",STUDY_VARIABLE_DESCRIPTION,STUDY_VARIABLE),val=1) %>% 
+        reshape2::dcast(STUDY_TYPE + STUDY_ID + DOMAIN ~ COLS,value.var='val')
+      
+      if( input$complete )
+        out <- out %>% 
+          dplyr::filter_(~complete.cases(.))
+
+      out <- out[input$study_select_rows_all,]
+      
+      out_copy_md <- knitr::kable(out)
+      
+      writeClipboard(out_copy_md)
     })
     
     observeEvent(input$queryBuilderSQL,{
@@ -263,6 +281,13 @@ searchbuilder <- function(viewer = shiny::dialogViewer(dialogName = 'GHAP',width
                                  the Studies Query Output table, if any rows are clicked/highlighted on 
                                  the table only the highlighted ones will be copied')
                  )
+          })
+          
+          output$btn_md <- renderUI({
+            list(shiny::actionButton(inputId = 'btn_md',label = 'Copy table as markdown to clipboard'),
+                 shiny::helpText('Use this button to copy to the clipboard the table seen on 
+                                 the Studies Query Output table as a markdown table to paste into documents or emails.')
+            )
           })
           
           output$study_select <- 
