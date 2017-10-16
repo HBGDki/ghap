@@ -7,31 +7,7 @@ Description: Utilities for working in GHAP. Not a useful package for the general
     public.
 Depends:
     R (>= 3.3.1)
-Imports:
-Imports: 
-  dplyr,
-  plyr,
-  tools,
-  xml2,
-  httr,
-  rvest,
-  utils,
-  readr,
-  osfr,
-  grDevices,
-  DT,
-  reshape2,
-  tibble,
-  d3Tree,
-  htmltools, 
-  shiny, 
-  miniUI, 
-  jsonlite, 
-  DBI,
-  queryBuildR,
-  vcs,
-  jsTree,
-  RSQLite
+Imports: utils,dplyr,readr,osfr,grDevices
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -40,7 +16,4 @@ Suggests:
     testthat
 RoxygenNote: 6.0.1
 Remotes: 
-    hafen/osfr,
-    metrumresearchgroup/jsTree,
-    metrumresearchgroup/vcs,
-    yonicd/queryBuildR
+    hafen/osfr

@@ -120,8 +120,8 @@ get_study_list <- function() {
 #' queries \tab character, vector of repository subdirectories to fetch         \cr
 #' create  \tab boolean, create a new git clone?, Default: TRUE                 \cr
 #' append  \tab boolean, append new lines to sparse-checkout file, Default: TRUE\cr
-#' remote  \tab character, alias of the remote, Default: 'origin'               \cr
-#' branch  \tab character, alias of the branch, Default: 'master'               
+#' remote  \tab character, alias of the remote, Default: 'origin' (adv. users)  \cr
+#' branch  \tab character, alias of the branch, Default: 'master' (adv. users)              
 #'}
 #' 
 #'
@@ -130,6 +130,18 @@ get_study_list <- function() {
 #' \dontrun{
 #' studies <- get_study_list_anthro()
 #' wsb <- use_study("wsb")
+#' 
+#' #sparse checkouts of study files from ghap to local checkout
+#' 
+#' #create new sparse clone
+#'   use_study(id='wsb',queries='*.rtf')
+#' 
+#' #append query sparse-checkout definitions (appends to current list)
+#'   use_study(id='wsb',queries='*.txt',create=FALSE,append=TRUE)
+#' 
+#' #replace query sparse-checkout definitions (replace to current list)
+#'   use_study(id='wsb',queries='*.txt',create=FALSE,append=FALSE)
+#'   
 #' }
 use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
   path <- get_git_base_path()
