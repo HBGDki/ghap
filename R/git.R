@@ -53,7 +53,8 @@ get_study_list_anthro <- function() {
     readr::read_csv(file.path(path, "hbgd/common/VisApps/VisApps.csv")))
   names(tmp) <- tolower(names(tmp))
 
-  tmp2 <- get_study_list()
+  tmp2 <- get_study_list() %>%
+    filter(status != "Obsolete")
   # tmp$study_id %in% tmp2$study_id
   tmp2 <- dplyr::select(tmp2, study_id, short_id, short_description,
     intervention_type, country, fstudy_id)
@@ -97,7 +98,8 @@ get_study_list <- function() {
   nms <- names(studies)
   nms <- setdiff(nms, c("program_folder", "child_count", "mpc", "clinical"))
   nms <- nms[!grepl("inactive", nms)]
-  studies <- dplyr::select(studies, dplyr::one_of(nms))
+  studies <- dplyr::select(studies, dplyr::one_of(nms)) %>%
+    dplyr::filter(status != "Obsolete")
   studies$fstudy_id <- fix_study_id(studies$study_id)
   invisible(studies)
 }
@@ -145,7 +147,7 @@ get_study_list <- function() {
 #' }
 use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
   path <- get_git_base_path()
-
+  
   studies <- get_study_list()
   idx <- which(studies$study_id == id | studies$fstudy_id == id)
   if (length(idx) == 0) {
@@ -153,18 +155,18 @@ use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
     if (length(idx) == 0)
       stop_nice("A study with id '", id, "' could not be found.")
   }
-
+  
   grant_folder <- studies$grant_folder[idx]
   update_repo(grant_folder, ...)
-
+  
   visapps <- get_study_list_anthro()
   va_idx <- which(visapps$study_id == studies$study_id[idx])
-
+  
   if (defin) {
     defdat <- NULL
     if (length(va_idx) > 0) {
       def_path <- file.path(path, "hbgd", grant_folder,
-        gsub("\\\\", "/", visapps$defin_path[va_idx]))
+                            gsub("\\\\", "/", visapps$defin_path[va_idx]))
       if (file.exists(def_path)) {
         message("Reading ", def_path)
         defdat <- suppressMessages(readr::read_csv(def_path))
@@ -172,16 +174,16 @@ use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
         defdat$name <- tolower(defdat$name)
       }
     }
-
+    
     if (is.null(defdat))
       message("Definition data was not read in...")
-
+    
     return(defdat)
   }
-
+  
   if (length(va_idx) > 0) {
     dat_path <- file.path(path, "hbgd", grant_folder,
-      gsub("\\\\", "/", visapps$data_path[va_idx]))
+                          gsub("\\\\", "/", visapps$data_path[va_idx]))
     if (!file.exists(dat_path)) {
       tmp <- list.files(dirname(dat_path), full.names = TRUE)
       tmpidx <- which(tolower(tmp) == tolower(dat_path))
@@ -193,12 +195,12 @@ use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
     }
   } else {
     analysis_folder <- studies$analysis_folder[idx]
-
+    
     study_path <- file.path(path, "hbgd", grant_folder, analysis_folder, "adam")
     ff <- list.files(study_path, pattern = "csv$")
     ffl <- tolower(ff)
     idx <- which(grepl("_defn", ffl))
-
+    
     if (length(idx) == 1) {
       newf <- gsub("_defn", "", ffl[idx])
       if (newf %in% ffl) {
@@ -207,31 +209,31 @@ use_study <- function(id, defin = FALSE, guess_max = 100000, ...) {
         idx <- which.max(file.info(file.path(study_path, ff))$size)
         message("Guessing which csv file to read: ", ff[idx])
         message("It is advised to look around the repository to see ",
-          "if a different file is more appropriate.")
+                "if a different file is more appropriate.")
         dat_path <- file.path(study_path, ff[idx])
       }
     }
   }
-
+  
   
   if (!is.null(dat_path)) {
     message("Reading ", dat_path)
     d <- suppressMessages(readr::read_csv(dat_path, guess_max = guess_max))
     names(d) <- tolower(names(d))
-  
+    
     # some studies (tanzaniachild2) have this issue:
     d$sex[d$sex == "male"] <- "Male"
     d$sex[d$sex == "female"] <- "Female"
-  
+    
     # some studies (tdc) have this issue:
     d <- dplyr::filter(d, !is.na(subjid))
-  
+    
     # some studies (bogalusa) have this issue: (some NA studyid)
     d$studyid <- d$studyid[1]
-  
+    
     d
   }
-   
+  
 }
 
 #' Get the path for the Vis-AdHocs repository
