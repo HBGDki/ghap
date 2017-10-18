@@ -12,7 +12,6 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests:
-    sinew,
     testthat
 RoxygenNote: 6.0.1
 Remotes: 
